@@ -1,0 +1,1 @@
+# administrasi-smpn10tual
