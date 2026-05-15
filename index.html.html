@@ -1,0 +1,2143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APLIKASI ADMINISTRASI GURU SMP Negeri 10 Tual</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+:root {
+  --blue-900: #0a1628;
+  --blue-800: #0d2144;
+  --blue-700: #1a3a6b;
+  --blue-600: #1e4d96;
+  --blue-500: #2563eb;
+  --blue-400: #3b82f6;
+  --blue-300: #60a5fa;
+  --blue-200: #93c5fd;
+  --blue-100: #dbeafe;
+  --blue-50:  #eff6ff;
+  --white: #ffffff;
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --card-green: linear-gradient(135deg,#10b981,#059669);
+  --card-purple: linear-gradient(135deg,#8b5cf6,#7c3aed);
+  --card-orange: linear-gradient(135deg,#f59e0b,#d97706);
+  --card-pink: linear-gradient(135deg,#ec4899,#db2777);
+  --card-teal: linear-gradient(135deg,#14b8a6,#0d9488);
+  --card-red: linear-gradient(135deg,#ef4444,#dc2626);
+  --card-blue: linear-gradient(135deg,#3b82f6,#2563eb);
+  --card-indigo: linear-gradient(135deg,#6366f1,#4f46e5);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+  --shadow: 0 4px 16px rgba(37,99,235,.1);
+  --shadow-lg: 0 8px 32px rgba(37,99,235,.15);
+  --shadow-xl: 0 20px 60px rgba(37,99,235,.2);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+  --transition: .35s cubic-bezier(.4,0,.2,1);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Exo 2',sans-serif;background:var(--gray-50);color:var(--gray-800);overflow-x:hidden}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--gray-100)}
+::-webkit-scrollbar-thumb{background:var(--blue-300);border-radius:4px}
+
+/* ══════════════ LOGIN PAGE ══════════════ */
+#loginPage{
+  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  background:#fff;z-index:1000;transition:opacity .6s ease,transform .6s ease;
+}
+#loginPage.hide{opacity:0;transform:scale(1.04);pointer-events:none}
+
+.login-bg{
+  position:absolute;inset:0;overflow:hidden;
+}
+.login-bg::before{
+  content:'';position:absolute;width:600px;height:600px;
+  background:radial-gradient(circle,rgba(37,99,235,.08) 0%,transparent 70%);
+  top:-100px;right:-100px;animation:pulse 4s ease-in-out infinite;
+}
+.login-bg::after{
+  content:'';position:absolute;width:400px;height:400px;
+  background:radial-gradient(circle,rgba(96,165,250,.06) 0%,transparent 70%);
+  bottom:-80px;left:-80px;animation:pulse 4s ease-in-out infinite .5s;
+}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+
+.login-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(37,99,235,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(37,99,235,.04) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+
+.login-card{
+  position:relative;width:100%;max-width:420px;padding:48px 40px;
+  background:#fff;border-radius:24px;
+  box-shadow:0 24px 80px rgba(37,99,235,.12),0 0 0 1px rgba(37,99,235,.08);
+  animation:slideUp .7s cubic-bezier(.4,0,.2,1);
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+
+.login-logo{
+  width:80px;height:80px;margin:0 auto 20px;
+  border-radius:50%;background:var(--card-blue);
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;cursor:pointer;position:relative;overflow:hidden;
+  box-shadow:0 8px 24px rgba(37,99,235,.3);transition:var(--transition);
+}
+.login-logo:hover{transform:scale(1.05)}
+.login-logo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.login-logo-overlay{
+  position:absolute;inset:0;background:rgba(0,0,0,.4);
+  display:none;align-items:center;justify-content:center;
+  font-size:12px;color:#fff;border-radius:50%;font-family:'Exo 2',sans-serif;
+}
+.login-logo:hover .login-logo-overlay{display:flex}
+
+.login-school{
+  text-align:center;margin-bottom:32px;
+}
+.login-school h1{
+  font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;
+  color:var(--blue-600);letter-spacing:.5px;line-height:1.3;text-transform:uppercase;
+}
+.login-school p{font-size:13px;color:var(--gray-400);margin-top:6px}
+
+.form-group{margin-bottom:20px}
+.form-group label{
+  display:block;font-size:13px;font-weight:600;color:var(--gray-600);
+  margin-bottom:8px;letter-spacing:.3px;
+}
+.form-group input{
+  width:100%;padding:13px 16px;border:1.5px solid var(--gray-200);
+  border-radius:var(--radius-sm);font-size:14px;font-family:'Exo 2',sans-serif;
+  transition:var(--transition);background:#fff;color:var(--gray-800);
+  outline:none;
+}
+.form-group input:focus{border-color:var(--blue-400);box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+
+.user-type-toggle{
+  display:flex;gap:8px;margin-bottom:20px;background:var(--gray-100);
+  padding:4px;border-radius:var(--radius-sm);
+}
+.user-type-toggle button{
+  flex:1;padding:8px;border:none;border-radius:8px;font-size:13px;font-weight:600;
+  cursor:pointer;transition:var(--transition);background:transparent;color:var(--gray-500);
+  font-family:'Exo 2',sans-serif;
+}
+.user-type-toggle button.active{background:#fff;color:var(--blue-600);box-shadow:var(--shadow-sm)}
+
+.btn-login{
+  width:100%;padding:14px;background:linear-gradient(135deg,var(--blue-500),var(--blue-700));
+  color:#fff;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:700;
+  cursor:pointer;transition:var(--transition);font-family:'Exo 2',sans-serif;
+  letter-spacing:.5px;position:relative;overflow:hidden;
+}
+.btn-login::before{
+  content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--blue-400),var(--blue-600));
+  opacity:0;transition:var(--transition);
+}
+.btn-login:hover::before{opacity:1}
+.btn-login:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(37,99,235,.35)}
+.btn-login:active{transform:translateY(0)}
+.btn-login span{position:relative}
+
+.login-dev{
+  text-align:center;margin-top:20px;font-size:12px;color:var(--gray-400);
+  font-style:italic;
+}
+#loginErr{
+  display:none;background:#fef2f2;border:1px solid #fecaca;color:#dc2626;
+  padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;text-align:center;
+}
+
+/* ══════════════ APP SHELL ══════════════ */
+#app{display:none;height:100vh;flex-direction:column;overflow:hidden}
+#app.visible{display:flex}
+
+/* ── TOP NAV ── */
+.topnav{
+  height:64px;background:#fff;border-bottom:1px solid var(--gray-200);
+  display:flex;align-items:center;padding:0 20px;gap:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);z-index:100;flex-shrink:0;
+}
+.topnav-logo{
+  display:flex;align-items:center;gap:10px;text-decoration:none;
+}
+.topnav-icon{
+  width:36px;height:36px;background:linear-gradient(135deg,var(--blue-500),var(--blue-700));
+  border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;
+  flex-shrink:0;
+}
+.topnav-title{
+  font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--blue-700);
+  line-height:1.2;text-transform:uppercase;letter-spacing:.3px;display:none;
+}
+@media(min-width:640px){.topnav-title{display:block}}
+
+.topnav-tabs{
+  display:flex;gap:2px;flex:1;overflow-x:auto;padding:4px 0;
+  scrollbar-width:none;
+}
+.topnav-tabs::-webkit-scrollbar{display:none}
+.topnav-tab{
+  padding:7px 14px;border:none;background:transparent;border-radius:8px;
+  font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:var(--transition);
+  color:var(--gray-500);font-family:'Exo 2',sans-serif;display:flex;align-items:center;gap:6px;
+}
+.topnav-tab:hover{background:var(--blue-50);color:var(--blue-600)}
+.topnav-tab.active{background:var(--blue-600);color:#fff}
+
+.topnav-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.topnav-year{
+  padding:6px 12px;background:var(--blue-50);border:1px solid var(--blue-200);
+  border-radius:8px;font-size:12px;font-weight:600;color:var(--blue-600);white-space:nowrap;
+}
+.topnav-avatar{
+  width:36px;height:36px;background:var(--card-blue);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700;
+  cursor:pointer;flex-shrink:0;
+}
+
+/* ── MAIN LAYOUT ── */
+.main-layout{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:220px;background:#fff;border-right:1px solid var(--gray-200);
+  display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;
+  transition:width var(--transition),transform var(--transition);
+}
+@media(max-width:768px){
+  .sidebar{position:fixed;top:64px;left:0;bottom:0;z-index:50;transform:translateX(-100%);width:240px}
+  .sidebar.open{transform:none}
+}
+.sidebar-section{padding:12px 8px 4px;font-size:11px;font-weight:700;color:var(--gray-400);letter-spacing:1px;text-transform:uppercase}
+.sidebar-item{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;margin:2px 8px;
+  border-radius:10px;cursor:pointer;transition:var(--transition);
+  font-size:13px;font-weight:500;color:var(--gray-600);
+}
+.sidebar-item:hover{background:var(--blue-50);color:var(--blue-600)}
+.sidebar-item.active{background:linear-gradient(135deg,var(--blue-500),var(--blue-700));color:#fff;box-shadow:0 4px 12px rgba(37,99,235,.3)}
+.sidebar-item.active .sidebar-icon{filter:brightness(0) invert(1)}
+.sidebar-icon{font-size:16px;flex-shrink:0}
+
+.sidebar-class-list{padding:0 8px}
+.sidebar-class{
+  display:flex;align-items:center;gap:8px;padding:8px 12px;margin:2px 0;
+  border-radius:8px;cursor:pointer;transition:var(--transition);font-size:13px;font-weight:500;color:var(--gray-600);
+}
+.sidebar-class:hover{background:var(--blue-50);color:var(--blue-600)}
+.sidebar-class.active{background:var(--blue-50);color:var(--blue-600);font-weight:600}
+.sidebar-class-dot{width:8px;height:8px;border-radius:50%;background:var(--blue-400);flex-shrink:0}
+
+/* ── CONTENT AREA ── */
+.content{flex:1;overflow-y:auto;padding:24px;transition:opacity .3s ease}
+.content.transitioning{opacity:0}
+
+/* ── PAGE SECTIONS ── */
+.page{display:none;animation:pageIn .35s ease}
+.page.active{display:block}
+@keyframes pageIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* ── SECTION HEADER ── */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.section-title{font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--gray-800);letter-spacing:.5px}
+.section-subtitle{font-size:13px;color:var(--gray-400);margin-top:2px}
+
+/* ── STAT CARDS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{
+  border-radius:var(--radius);padding:20px;color:#fff;position:relative;overflow:hidden;
+  box-shadow:var(--shadow);transition:var(--transition);cursor:default;
+}
+.stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.stat-card::before{
+  content:'';position:absolute;right:-20px;top:-20px;width:100px;height:100px;
+  border-radius:50%;background:rgba(255,255,255,.1);
+}
+.stat-card::after{
+  content:'';position:absolute;right:20px;bottom:-30px;width:80px;height:80px;
+  border-radius:50%;background:rgba(255,255,255,.08);
+}
+.stat-icon{font-size:28px;margin-bottom:8px;position:relative}
+.stat-value{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;line-height:1;position:relative}
+.stat-label{font-size:13px;opacity:.85;margin-top:4px;position:relative}
+
+/* ── CARDS ── */
+.card{background:#fff;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border:1px solid var(--gray-100)}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.card-title{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--gray-800)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;
+  font-size:13px;font-weight:600;cursor:pointer;border:none;transition:var(--transition);
+  font-family:'Exo 2',sans-serif;white-space:nowrap;
+}
+.btn-primary{background:linear-gradient(135deg,var(--blue-500),var(--blue-700));color:#fff;box-shadow:0 4px 12px rgba(37,99,235,.25)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(37,99,235,.35)}
+.btn-success{background:linear-gradient(135deg,#10b981,#059669);color:#fff;box-shadow:0 4px 12px rgba(16,185,129,.25)}
+.btn-danger{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
+.btn-outline{background:#fff;color:var(--blue-600);border:1.5px solid var(--blue-300)}
+.btn-outline:hover{background:var(--blue-50)}
+.btn-gray{background:var(--gray-100);color:var(--gray-600)}
+.btn-gray:hover{background:var(--gray-200)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-xs{padding:4px 8px;font-size:11px}
+.btn-icon{padding:8px;border-radius:8px;background:var(--gray-100);color:var(--gray-600);border:none;cursor:pointer;font-size:16px;transition:var(--transition)}
+.btn-icon:hover{background:var(--blue-50);color:var(--blue-600)}
+
+/* ── FORMS ── */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:600px){.form-row{grid-template-columns:1fr}}
+.form-field{margin-bottom:12px}
+.form-field label{display:block;font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:6px;letter-spacing:.3px}
+.form-field input,.form-field select,.form-field textarea{
+  width:100%;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;
+  font-size:13px;font-family:'Exo 2',sans-serif;transition:var(--transition);background:#fff;
+  color:var(--gray-800);outline:none;
+}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--blue-400);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.form-field textarea{resize:vertical;min-height:80px}
+
+/* ── TABLES ── */
+.table-wrap{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--gray-200)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:linear-gradient(135deg,var(--blue-600),var(--blue-800));color:#fff;padding:10px 12px;font-weight:600;white-space:nowrap;text-align:left;letter-spacing:.3px}
+thead th:first-child{border-radius:var(--radius-sm) 0 0 0}
+thead th:last-child{border-radius:0 var(--radius-sm) 0 0}
+tbody td{padding:9px 12px;border-bottom:1px solid var(--gray-100);color:var(--gray-700)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--blue-50)}
+tbody tr:nth-child(even){background:var(--gray-50)}
+tbody tr:nth-child(even):hover{background:var(--blue-50)}
+
+/* ── BADGE ── */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.3px}
+.badge-blue{background:var(--blue-100);color:var(--blue-700)}
+.badge-green{background:#d1fae5;color:#065f46}
+.badge-red{background:#fee2e2;color:#991b1b}
+.badge-yellow{background:#fef3c7;color:#92400e}
+.badge-purple{background:#ede9fe;color:#5b21b6}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;
+  display:none;align-items:center;justify-content:center;padding:16px;
+  animation:fadeIn .2s ease;
+}
+.modal-overlay.open{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{
+  background:#fff;border-radius:20px;padding:28px;width:100%;max-width:520px;max-height:90vh;
+  overflow-y:auto;box-shadow:var(--shadow-xl);animation:modalIn .3s cubic-bezier(.4,0,.2,1);
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.92) translateY(20px)}to{opacity:1;transform:none}}
+.modal-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--gray-800);margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--gray-200)}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--gray-200)}
+
+/* ── CALENDAR ── */
+.cal-wrap{margin-bottom:16px}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cal-title{font-size:13px;font-weight:700;color:var(--blue-700);letter-spacing:.3px;text-transform:uppercase}
+.cal-toggle{background:var(--blue-50);border:1px solid var(--blue-200);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--blue-600);cursor:pointer}
+.cal-grid{display:none}
+.cal-grid.show{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:6px}
+.cal-day-name{text-align:center;font-size:10px;font-weight:700;color:var(--gray-400);padding:3px 0;letter-spacing:.5px}
+.cal-day{
+  text-align:center;font-size:11px;padding:4px 2px;border-radius:4px;cursor:pointer;
+  transition:var(--transition);color:var(--gray-600);border:1px solid transparent;min-height:24px;
+}
+.cal-day:hover{background:var(--blue-50);color:var(--blue-600)}
+.cal-day.today{background:var(--blue-600);color:#fff;font-weight:700}
+.cal-day.weekend{color:var(--blue-400)}
+.cal-day.has-entry{border-color:var(--blue-300);background:var(--blue-50)}
+
+/* ── ATTENDANCE CELL ── */
+.att-cell{
+  width:28px;height:28px;border-radius:6px;border:1.5px solid var(--gray-200);
+  background:#fff;font-size:11px;font-weight:700;cursor:pointer;transition:var(--transition);
+  display:inline-flex;align-items:center;justify-content:center;text-transform:uppercase;
+}
+.att-H,.att-dot{background:#d1fae5;color:#065f46;border-color:#6ee7b7}
+.att-S{background:#fef3c7;color:#92400e;border-color:#fde68a}
+.att-I{background:#dbeafe;color:#1e40af;border-color:#93c5fd}
+.att-A{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+.att-empty{background:#fff;color:var(--gray-300);border-color:var(--gray-200)}
+
+/* ── QUICK ACCESS GRID ── */
+.quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.quick-card{
+  border-radius:var(--radius-sm);padding:16px;text-align:center;cursor:pointer;
+  transition:var(--transition);border:1.5px solid transparent;
+}
+.quick-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.quick-card-icon{font-size:28px;margin-bottom:8px}
+.quick-card-label{font-size:12px;font-weight:600;color:#fff;opacity:.9}
+
+/* ── INPUT NILAI ── */
+.nilai-input{
+  width:52px;padding:5px 6px;border:1.5px solid var(--gray-200);border-radius:6px;
+  font-size:12px;font-family:'Exo 2',sans-serif;text-align:center;transition:var(--transition);
+}
+.nilai-input:focus{border-color:var(--blue-400);outline:none;box-shadow:0 0 0 2px rgba(59,130,246,.1)}
+
+/* ── PROFILE CARD ── */
+.profile-card{
+  background:linear-gradient(135deg,var(--blue-600),var(--blue-900));
+  border-radius:var(--radius);padding:24px;color:#fff;position:relative;overflow:hidden;
+}
+.profile-card::before{content:'';position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.05);right:-50px;top:-50px}
+.profile-avatar{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.15);border:3px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;margin-bottom:12px;font-family:'Rajdhani',sans-serif}
+.profile-name{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;position:relative}
+.profile-role{font-size:13px;opacity:.7;margin-top:2px;position:relative}
+.profile-info{display:flex;flex-direction:column;gap:8px;margin-top:16px;position:relative}
+.profile-info-row{display:flex;gap:10px;align-items:center;font-size:13px;opacity:.85}
+.profile-info-row span:first-child{opacity:.6;width:70px;flex-shrink:0;font-size:12px}
+
+/* ── SEARCH ── */
+.search-input{
+  padding:9px 14px 9px 36px;border:1.5px solid var(--gray-200);border-radius:8px;
+  font-size:13px;font-family:'Exo 2',sans-serif;transition:var(--transition);background:#fff;
+  color:var(--gray-800);outline:none;width:220px;
+}
+.search-input:focus{border-color:var(--blue-400);box-shadow:0 0 0 3px rgba(59,130,246,.1);width:260px}
+.search-wrap{position:relative}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:14px}
+
+/* ── SEMESTER TABS ── */
+.semester-tabs{display:flex;gap:4px;background:var(--gray-100);padding:4px;border-radius:10px;margin-bottom:20px}
+.semester-tab{flex:1;padding:7px;text-align:center;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;transition:var(--transition);color:var(--gray-500);border:none;font-family:'Exo 2',sans-serif}
+.semester-tab.active{background:#fff;color:var(--blue-600);box-shadow:var(--shadow-sm)}
+
+/* ── TASK CARD ── */
+.task-card{background:#fff;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:16px;transition:var(--transition)}
+.task-card:hover{border-color:var(--blue-300);box-shadow:var(--shadow)}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;right:24px;background:var(--gray-800);color:#fff;
+  padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;z-index:2000;
+  animation:toastIn .3s ease;box-shadow:var(--shadow-lg);
+}
+.toast.success{background:linear-gradient(135deg,#10b981,#059669)}
+.toast.error{background:linear-gradient(135deg,#ef4444,#dc2626)}
+@keyframes toastIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+/* ── SIDEBAR OVERLAY (mobile) ── */
+.sidebar-overlay{display:none;position:fixed;inset:0;top:64px;background:rgba(0,0,0,.4);z-index:40}
+.sidebar-overlay.open{display:block}
+
+/* ── HAMBURGER ── */
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;border-radius:8px;color:var(--gray-600);font-size:20px}
+@media(max-width:768px){.hamburger{display:flex;align-items:center}}
+
+/* ── DATA SEKOLAH ── */
+.school-logo-upload{
+  width:100px;height:100px;border-radius:16px;border:2px dashed var(--blue-300);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;transition:var(--transition);background:var(--blue-50);color:var(--blue-500);
+  font-size:12px;text-align:center;gap:6px;
+}
+.school-logo-upload:hover{background:var(--blue-100);border-color:var(--blue-500)}
+.school-logo-upload img{width:100%;height:100%;object-fit:cover;border-radius:14px}
+
+/* ── NILAI RAPORT BADGE ── */
+.nilai-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;min-width:44px;
+}
+.nilai-A{background:#d1fae5;color:#065f46}
+.nilai-B{background:#dbeafe;color:#1e40af}
+.nilai-C{background:#fef3c7;color:#92400e}
+.nilai-D{background:#fee2e2;color:#991b1b}
+
+/* ── RESPONSIVE FIXES ── */
+@media(max-width:1024px){
+  .sidebar{width:60px}
+  .sidebar-item span,.sidebar-class-list,.sidebar-section{display:none}
+}
+@media(max-width:768px){
+  .content{padding:16px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  table{font-size:12px}
+  thead th,tbody td{padding:7px 8px}
+}
+
+/* ── ANIMATED NUMBERS ── */
+.counter{transition:all .5s ease}
+
+/* ── PROGRESS BAR ── */
+.progress-bar{height:8px;background:var(--gray-200);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;transition:width 1s ease;background:linear-gradient(90deg,var(--blue-400),var(--blue-600))}
+
+/* ── ATTENDANCE SUMMARY ── */
+.att-summary{display:flex;gap:12px;flex-wrap:wrap}
+.att-sum-item{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600}
+.att-sum-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+
+/* ── YEAR SETTINGS ── */
+.year-display{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--blue-600);text-align:center;padding:20px;background:var(--blue-50);border-radius:var(--radius-sm);border:2px solid var(--blue-200)}
+
+/* ── PRINT HIDE ── */
+@media print{.topnav,.sidebar,.btn,.modal-overlay{display:none!important}.content{padding:0}}
+</style>
+</head>
+<body>
+
+<!-- ════════════ LOGIN PAGE ════════════ -->
+<div id="loginPage">
+  <div class="login-bg">
+    <div class="login-grid"></div>
+  </div>
+  <div class="login-card">
+    <div style="text-align:center">
+      <div class="login-logo" onclick="document.getElementById('logoUpload').click()" title="Klik untuk ganti logo">
+        <span id="loginLogoEmoji">🏫</span>
+        <img id="loginLogoImg" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%">
+        <div class="login-logo-overlay">Ganti Logo</div>
+      </div>
+      <input type="file" id="logoUpload" accept="image/*" style="display:none" onchange="uploadLogo(this)">
+    </div>
+    <div class="login-school">
+      <h1>APLIKASI ADMINISTRASI GURU<br>SMP Negeri 10 Tual</h1>
+      <p>Sistem Informasi Administrasi Kelas Digital</p>
+    </div>
+    <div class="user-type-toggle">
+      <button class="active" onclick="setUserType('guru',this)">👨‍🏫 Guru</button>
+      <button onclick="setUserType('orangtua',this)">👪 Orang Tua</button>
+    </div>
+    <div id="loginErr"></div>
+    <div class="form-group">
+      <label id="lblUsername">Nama Lengkap Guru</label>
+      <input type="text" id="inpUsername" placeholder="Masukkan nama lengkap" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="inpPassword" placeholder="Masukkan password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn-login" onclick="doLogin()"><span>🚀 Masuk ke Aplikasi</span></button>
+    <p class="login-dev">Aplikasi ini dikembangkan oleh : <strong>Alimin Tarwa, S.Pd</strong></p>
+  </div>
+</div>
+
+<!-- ════════════ APP ════════════ -->
+<div id="app">
+
+  <!-- TOP NAV -->
+  <nav class="topnav">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <a class="topnav-logo" href="#">
+      <div class="topnav-icon">
+        <img id="navLogo" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:7px">
+        <span id="navLogoEmoji">🏫</span>
+      </div>
+      <div class="topnav-title">APLIKASI ADMINISTRASI<br>SMP NEGERI 10 TUAL</div>
+    </a>
+    <div class="topnav-tabs" id="topTabs">
+      <button class="topnav-tab active" onclick="showPage('dashboard',this)">📊 Dashboard</button>
+      <button class="topnav-tab" onclick="showPage('dataSekolah',this)">🏫 Data Sekolah</button>
+      <button class="topnav-tab" onclick="showPage('dataKelas',this)">🏛️ Data Kelas</button>
+      <button class="topnav-tab" onclick="showPage('siswa',this)">👥 Data Siswa</button>
+      <button class="topnav-tab" onclick="showPage('absenSiswa',this)">📋 Absen Siswa</button>
+      <button class="topnav-tab" onclick="showPage('nilaiSiswa',this)">📝 Nilai Siswa</button>
+      <button class="topnav-tab" onclick="showPage('absenGuru',this)">👨‍🏫 Absen Guru</button>
+      <button class="topnav-tab" onclick="showPage('jurnal',this)">📔 Jurnal</button>
+      <button class="topnav-tab" onclick="showPage('tugas',this)">📎 Tugas</button>
+      <button class="topnav-tab" onclick="showPage('biodataGuru',this)">👤 Biodata Guru</button>
+      <button class="topnav-tab" onclick="showPage('pengaturan',this)">⚙️ Pengaturan</button>
+    </div>
+    <div class="topnav-right">
+      <div class="topnav-year" id="topYear">2024/2025</div>
+      <div class="topnav-avatar" id="userAvatar" onclick="showPage('biodataGuru',null)">G</div>
+      <button class="btn btn-gray btn-sm" onclick="doLogout()">Keluar</button>
+    </div>
+  </nav>
+
+  <div class="main-layout">
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div style="padding:12px">
+        <div class="sidebar-section">MENU UTAMA</div>
+        <div class="sidebar-item active" onclick="showPage('dashboard',null);closeSidebar()"><span class="sidebar-icon">📊</span><span>Dashboard</span></div>
+        <div class="sidebar-item" onclick="showPage('dataSekolah',null);closeSidebar()"><span class="sidebar-icon">🏫</span><span>Data Sekolah</span></div>
+        <div class="sidebar-item" onclick="showPage('dataKelas',null);closeSidebar()"><span class="sidebar-icon">🏛️</span><span>Data Kelas</span></div>
+        <div class="sidebar-item" onclick="showPage('biodataGuru',null);closeSidebar()"><span class="sidebar-icon">👤</span><span>Biodata Guru</span></div>
+        <div class="sidebar-item" onclick="showPage('pengaturan',null);closeSidebar()"><span class="sidebar-icon">⚙️</span><span>Pengaturan</span></div>
+        <div class="sidebar-section" style="margin-top:8px">ADMINISTRASI KELAS</div>
+        <div class="sidebar-item" onclick="showPage('siswa',null);closeSidebar()"><span class="sidebar-icon">👥</span><span>Data Siswa</span></div>
+        <div class="sidebar-item" onclick="showPage('absenSiswa',null);closeSidebar()"><span class="sidebar-icon">📋</span><span>Absen Siswa</span></div>
+        <div class="sidebar-item" onclick="showPage('nilaiSiswa',null);closeSidebar()"><span class="sidebar-icon">📝</span><span>Nilai Siswa</span></div>
+        <div class="sidebar-item" onclick="showPage('absenGuru',null);closeSidebar()"><span class="sidebar-icon">👨‍🏫</span><span>Absen Guru</span></div>
+        <div class="sidebar-item" onclick="showPage('jurnal',null);closeSidebar()"><span class="sidebar-icon">📔</span><span>Jurnal Guru</span></div>
+        <div class="sidebar-item" onclick="showPage('tugas',null);closeSidebar()"><span class="sidebar-icon">📎</span><span>Tugas</span></div>
+        <div class="sidebar-section" style="margin-top:8px">KELAS SAYA</div>
+        <div class="sidebar-class-list" id="sidebarClassList"></div>
+      </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="content" id="content">
+
+      <!-- ══════ DASHBOARD ══════ -->
+      <div class="page active" id="page-dashboard">
+        <div class="section-header">
+          <div>
+            <div class="section-title">📊 Dashboard</div>
+            <div class="section-subtitle" id="dashDate">Selamat datang di Aplikasi Administrasi Guru</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span class="badge badge-blue" id="dashSemLabel">Semester Ganjil</span>
+          </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card" style="background:var(--card-blue)">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value" id="statSiswa">0</div>
+            <div class="stat-label">Total Siswa</div>
+          </div>
+          <div class="stat-card" style="background:var(--card-green)">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value" id="statHadir">-</div>
+            <div class="stat-label">Kehadiran Hari Ini</div>
+          </div>
+          <div class="stat-card" style="background:var(--card-purple)">
+            <div class="stat-icon">🏛️</div>
+            <div class="stat-value" id="statKelas">0</div>
+            <div class="stat-label">Jumlah Kelas</div>
+          </div>
+          <div class="stat-card" style="background:var(--card-orange)">
+            <div class="stat-icon">📎</div>
+            <div class="stat-value" id="statTugas">0</div>
+            <div class="stat-label">Tugas Aktif</div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:20px">
+          <!-- PROFILE SINGKAT -->
+          <div class="profile-card" id="dashProfile">
+            <div class="profile-avatar" id="dashAvatarChar">G</div>
+            <div class="profile-name" id="dashNamaGuru">Nama Guru</div>
+            <div class="profile-role" id="dashNIP">NIP: -</div>
+            <div class="profile-info">
+              <div class="profile-info-row"><span>No. Kontak</span><span id="dashKontak">-</span></div>
+              <div class="profile-info-row"><span>Alamat</span><span id="dashAlamat">-</span></div>
+              <div class="profile-info-row"><span>Motto</span><span id="dashMotto" style="font-style:italic">-</span></div>
+            </div>
+          </div>
+          <!-- DATA SEKOLAH SINGKAT -->
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px">🏫 Data Sekolah</div>
+            <div style="display:flex;gap:16px;align-items:center">
+              <div id="dashSchoolLogoWrap" style="width:60px;height:60px;border-radius:12px;background:var(--blue-100);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">🏫</div>
+              <div>
+                <div style="font-weight:700;font-size:15px;color:var(--gray-800)" id="dashNamaSekolah">SMP Negeri 10 Tual</div>
+                <div style="font-size:12px;color:var(--gray-500);margin-top:4px" id="dashAlamatSekolah">Tual, Maluku</div>
+                <div style="font-size:12px;color:var(--gray-500);margin-top:2px" id="dashNPSN">NPSN: -</div>
+              </div>
+            </div>
+            <div style="margin-top:16px">
+              <div style="font-size:12px;font-weight:600;color:var(--gray-500);margin-bottom:6px">Tahun Pelajaran</div>
+              <div class="year-display" id="dashTahun" style="font-size:18px;padding:10px">2024/2025</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- QUICK ACCESS -->
+        <div class="card">
+          <div class="card-title" style="margin-bottom:16px">⚡ Akses Cepat</div>
+          <div class="quick-grid">
+            <div class="quick-card" style="background:var(--card-blue)" onclick="showPage('dataKelas',null)"><div class="quick-card-icon">🏛️</div><div class="quick-card-label">Data Kelas</div></div>
+            <div class="quick-card" style="background:var(--card-green)" onclick="showPage('siswa',null)"><div class="quick-card-icon">👥</div><div class="quick-card-label">Data Siswa</div></div>
+            <div class="quick-card" style="background:var(--card-purple)" onclick="showPage('absenSiswa',null)"><div class="quick-card-icon">📋</div><div class="quick-card-label">Absen Siswa</div></div>
+            <div class="quick-card" style="background:var(--card-orange)" onclick="showPage('nilaiSiswa',null)"><div class="quick-card-icon">📝</div><div class="quick-card-label">Nilai Siswa</div></div>
+            <div class="quick-card" style="background:var(--card-pink)" onclick="showPage('absenGuru',null)"><div class="quick-card-icon">👨‍🏫</div><div class="quick-card-label">Absen Guru</div></div>
+            <div class="quick-card" style="background:var(--card-teal)" onclick="showPage('jurnal',null)"><div class="quick-card-icon">📔</div><div class="quick-card-label">Jurnal Guru</div></div>
+            <div class="quick-card" style="background:var(--card-indigo)" onclick="showPage('tugas',null)"><div class="quick-card-icon">📎</div><div class="quick-card-label">Tugas</div></div>
+            <div class="quick-card" style="background:var(--card-red)" onclick="showPage('biodataGuru',null)"><div class="quick-card-icon">👤</div><div class="quick-card-label">Biodata Guru</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ DATA SEKOLAH ══════ -->
+      <div class="page" id="page-dataSekolah">
+        <div class="section-header">
+          <div><div class="section-title">🏫 Data Sekolah</div><div class="section-subtitle">Informasi profil sekolah</div></div>
+          <button class="btn btn-primary" onclick="saveSekolah()">💾 Simpan Data</button>
+        </div>
+        <div class="card">
+          <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+            <div>
+              <div style="font-size:12px;font-weight:600;color:var(--gray-500);margin-bottom:8px">Logo Sekolah</div>
+              <div class="school-logo-upload" onclick="document.getElementById('schoolLogoUpload').click()">
+                <img id="schoolLogoImg" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:14px">
+                <span id="schoolLogoEmoji" style="font-size:32px">🏫</span>
+                <span style="font-size:11px">Klik untuk upload</span>
+              </div>
+              <input type="file" id="schoolLogoUpload" accept="image/*" style="display:none" onchange="uploadSchoolLogo(this)">
+            </div>
+            <div style="flex:1;min-width:280px">
+              <div class="form-row">
+                <div class="form-field"><label>Nama Sekolah</label><input id="inpNamaSekolah" value="SMP Negeri 10 Tual"></div>
+                <div class="form-field"><label>NPSN</label><input id="inpNPSN" placeholder="Nomor Pokok Sekolah Nasional"></div>
+              </div>
+              <div class="form-field"><label>Alamat Sekolah</label><input id="inpAlamatSekolah" value="Tual, Maluku"></div>
+              <div class="form-row">
+                <div class="form-field"><label>Kepala Sekolah</label><input id="inpKepsek" placeholder="Nama kepala sekolah"></div>
+                <div class="form-field"><label>No. Telepon</label><input id="inpTelpSekolah" placeholder="Nomor telepon sekolah"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-field"><label>Email</label><input id="inpEmailSekolah" placeholder="Email sekolah"></div>
+                <div class="form-field"><label>Website</label><input id="inpWebSekolah" placeholder="Website sekolah"></div>
+              </div>
+              <div class="form-field"><label>Akreditasi</label>
+                <select id="inpAkreditasi"><option>A (Unggul)</option><option>B (Baik)</option><option>C (Cukup)</option></select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ DATA KELAS ══════ -->
+      <div class="page" id="page-dataKelas">
+        <div class="section-header">
+          <div><div class="section-title">🏛️ Data Kelas</div><div class="section-subtitle">Manajemen kelas</div></div>
+          <button class="btn btn-primary" onclick="openAddKelas()">➕ Tambah Kelas</button>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>No</th><th>Nama Kelas</th><th>Wali Kelas</th><th>Jumlah Siswa</th><th>Aksi</th></tr></thead>
+              <tbody id="kelasTbody"></tbody>
+            </table>
+          </div>
+          <div id="kelasEmpty" style="text-align:center;padding:40px;color:var(--gray-400)">
+            <div style="font-size:40px;margin-bottom:12px">🏛️</div>
+            <div>Belum ada kelas. Klik "Tambah Kelas" untuk memulai.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ DATA SISWA ══════ -->
+      <div class="page" id="page-siswa">
+        <div class="section-header">
+          <div><div class="section-title">👥 Data Siswa</div><div class="section-subtitle">Manajemen data peserta didik</div></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-outline btn-sm" onclick="downloadTemplateSiswa()">📥 Template Excel</button>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('importSiswaFile').click()">📤 Import Excel</button>
+            <input type="file" id="importSiswaFile" accept=".xlsx,.xls" style="display:none" onchange="importSiswa(this)">
+            <button class="btn btn-primary btn-sm" onclick="openAddSiswa()">➕ Tambah Siswa</button>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <div class="form-field" style="margin:0;min-width:180px">
+              <select id="siswaKelasFilter" onchange="renderSiswaTable()" style="padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-family:'Exo 2',sans-serif;font-size:13px;outline:none;cursor:pointer">
+                <option value="">-- Pilih Kelas --</option>
+              </select>
+            </div>
+            <div class="search-wrap">
+              <span class="search-icon">🔍</span>
+              <input type="text" class="search-input" id="siswaSearch" placeholder="Cari siswa..." oninput="renderSiswaTable()">
+            </div>
+            <span class="badge badge-blue" id="siswaBadge">0 siswa</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>No</th><th>Nama</th><th>JK</th><th>NISN</th><th>Nama Ayah</th><th>Pekerjaan Ayah</th><th>Nama Ibu</th><th>Pekerjaan Ibu</th><th>Kelas</th><th>Aksi</th></tr></thead>
+              <tbody id="siswaTbody"></tbody>
+            </table>
+          </div>
+          <div id="siswaEmpty" style="text-align:center;padding:40px;color:var(--gray-400)">
+            <div style="font-size:40px;margin-bottom:12px">👥</div>
+            <div>Pilih kelas atau tambahkan siswa terlebih dahulu.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ ABSEN SISWA ══════ -->
+      <div class="page" id="page-absenSiswa">
+        <div class="section-header">
+          <div><div class="section-title">📋 Absen Siswa</div><div class="section-subtitle">Klik sel untuk mengubah keterangan kehadiran</div></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <select id="absenKelasSelect" onchange="renderAbsenSiswa()" style="padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-family:'Exo 2',sans-serif;font-size:13px;outline:none;cursor:pointer">
+              <option value="">-- Pilih Kelas --</option>
+            </select>
+            <select id="absenBulanSelect" onchange="renderAbsenSiswa()" style="padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-family:'Exo 2',sans-serif;font-size:13px;outline:none;cursor:pointer">
+              <option value="0">Januari</option><option value="1">Februari</option><option value="2">Maret</option>
+              <option value="3">April</option><option value="4">Mei</option><option value="5">Juni</option>
+              <option value="6">Juli</option><option value="7">Agustus</option><option value="8">September</option>
+              <option value="9">Oktober</option><option value="10">November</option><option value="11">Desember</option>
+            </select>
+            <button class="btn btn-outline btn-sm" onclick="downloadAbsenSiswa()">⬇️ Download</button>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+            <div class="att-summary">
+              <div class="att-sum-item"><div class="att-sum-dot" style="background:#6ee7b7"></div>Hadir (.)</div>
+              <div class="att-sum-item"><div class="att-sum-dot" style="background:#fde68a"></div>Sakit (S)</div>
+              <div class="att-sum-item"><div class="att-sum-dot" style="background:#93c5fd"></div>Izin (I)</div>
+              <div class="att-sum-item"><div class="att-sum-dot" style="background:#fca5a5"></div>Alpa (A)</div>
+            </div>
+            <div class="cal-wrap" style="flex:1">
+              <div class="cal-header">
+                <span class="cal-title" id="absenCalTitle">Kalender Bulan</span>
+                <button class="cal-toggle" onclick="toggleCal('absenCal')">👁 Tampilkan Kalender</button>
+              </div>
+              <div class="cal-grid" id="absenCal"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div id="absenSiswaContent">
+            <div style="text-align:center;padding:40px;color:var(--gray-400)">
+              <div style="font-size:40px;margin-bottom:12px">📋</div>
+              <div>Pilih kelas untuk menampilkan absensi.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ NILAI SISWA ══════ -->
+      <div class="page" id="page-nilaiSiswa">
+        <div class="section-header">
+          <div><div class="section-title">📝 Nilai Siswa</div><div class="section-subtitle">Input dan rekap nilai peserta didik</div></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <select id="nilaiKelasSelect" onchange="renderNilai()" style="padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-family:'Exo 2',sans-serif;font-size:13px;outline:none;cursor:pointer">
+              <option value="">-- Pilih Kelas --</option>
+            </select>
+            <select id="nilaiMapelSelect" onchange="renderNilai()" style="padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-family:'Exo 2',sans-serif;font-size:13px;outline:none;cursor:pointer">
+              <option value="">-- Pilih Mata Pelajaran --</option>
+            </select>
+            <button class="btn btn-success btn-sm" onclick="downloadNilai()">⬇️ Download Nilai</button>
+          </div>
+        </div>
+        <div class="card">
+          <div id="nilaiContent">
+            <div style="text-align:center;padding:40px;color:var(--gray-400)">
+              <div style="font-size:40px;margin-bottom:12px">📝</div>
+              <div>Pilih kelas dan mata pelajaran.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ ABSEN GURU ══════ -->
+      <div class="page" id="page-absenGuru">
+        <div class="section-header">
+          <div><div class="section-title">👨‍🏫 Absen Guru</div><div class="section-subtitle">Rekap kehadiran guru mengajar</div></div>
+          <div style="display:flex;gap:8px">
+            <select id="absenGuruBulan" onchange="renderAbsenGuru()" style="padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-family:'Exo 2',sans-serif;font-size:13px;outline:none;cursor:pointer">
+              <option value="0">Januari</option><option value="1">Februari</option><option value="2">Maret</option>
+              <option value="3">April</option><option value="4">Mei</option><option value="5">Juni</option>
+              <option value="6">Juli</option><option value="7">Agustus</option><option value="8">September</option>
+              <option value="9">Oktober</option><option value="10">November</option><option value="11">Desember</option>
+            </select>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="cal-wrap">
+            <div class="cal-header">
+              <span class="cal-title" id="absenGuruCalTitle">Kalender Kehadiran Guru</span>
+              <button class="cal-toggle" onclick="toggleCal('absenGuruCal')">👁 Tampilkan Kalender</button>
+            </div>
+            <div class="cal-grid" id="absenGuruCal"></div>
+          </div>
+          <div class="att-summary" style="margin-top:12px">
+            <div class="att-sum-item"><div class="att-sum-dot" style="background:#6ee7b7"></div>Hadir</div>
+            <div class="att-sum-item"><div class="att-sum-dot" style="background:#fde68a"></div>Sakit</div>
+            <div class="att-sum-item"><div class="att-sum-dot" style="background:#93c5fd"></div>Izin</div>
+            <div class="att-sum-item"><div class="att-sum-dot" style="background:#fca5a5"></div>Alpa</div>
+          </div>
+        </div>
+        <div class="card">
+          <div id="absenGuruContent"></div>
+        </div>
+      </div>
+
+      <!-- ══════ JURNAL ══════ -->
+      <div class="page" id="page-jurnal">
+        <div class="section-header">
+          <div><div class="section-title">📔 Jurnal Guru</div><div class="section-subtitle">Catatan kegiatan pembelajaran harian</div></div>
+          <div style="display:flex;gap:8px">
+            <select id="jurnalKelas" onchange="renderJurnal()" style="padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-family:'Exo 2',sans-serif;font-size:13px;outline:none;cursor:pointer">
+              <option value="">-- Pilih Kelas --</option>
+            </select>
+            <select id="jurnalBulan" onchange="renderJurnal()" style="padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-family:'Exo 2',sans-serif;font-size:13px;outline:none;cursor:pointer">
+              <option value="0">Januari</option><option value="1">Februari</option><option value="2">Maret</option>
+              <option value="3">April</option><option value="4">Mei</option><option value="5">Juni</option>
+              <option value="6">Juli</option><option value="7">Agustus</option><option value="8">September</option>
+              <option value="9">Oktober</option><option value="10">November</option><option value="11">Desember</option>
+            </select>
+            <button class="btn btn-success btn-sm" onclick="saveJurnal()">💾 Simpan</button>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="cal-wrap">
+            <div class="cal-header">
+              <span class="cal-title" id="jurnalCalTitle">Kalender Jurnal</span>
+              <button class="cal-toggle" onclick="toggleCal('jurnalCal')">👁 Tampilkan Kalender</button>
+            </div>
+            <div class="cal-grid" id="jurnalCal"></div>
+          </div>
+        </div>
+        <div class="card" id="jurnalContent">
+          <div style="text-align:center;padding:40px;color:var(--gray-400)">
+            <div style="font-size:40px;margin-bottom:12px">📔</div>
+            <div>Pilih kelas dan bulan untuk menampilkan jurnal.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ TUGAS ══════ -->
+      <div class="page" id="page-tugas">
+        <div class="section-header">
+          <div><div class="section-title">📎 Tugas</div><div class="section-subtitle">Upload & unduh materi tugas siswa</div></div>
+          <button class="btn btn-primary" onclick="openAddTugas()">➕ Tambah Tugas</button>
+        </div>
+        <div id="tugasList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px"></div>
+        <div id="tugasEmpty" style="text-align:center;padding:60px;color:var(--gray-400)">
+          <div style="font-size:50px;margin-bottom:12px">📎</div>
+          <div>Belum ada tugas. Klik "Tambah Tugas" untuk menambahkan.</div>
+        </div>
+      </div>
+
+      <!-- ══════ BIODATA GURU ══════ -->
+      <div class="page" id="page-biodataGuru">
+        <div class="section-header">
+          <div><div class="section-title">👤 Biodata Guru</div><div class="section-subtitle">Data profil guru</div></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline btn-sm" onclick="downloadTemplateGuru()">📥 Template Excel</button>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('importGuruFile').click()">📤 Import Excel</button>
+            <input type="file" id="importGuruFile" accept=".xlsx,.xls" style="display:none" onchange="importGuru(this)">
+            <button class="btn btn-primary" onclick="saveBiodata()">💾 Simpan Biodata</button>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px">📋 Data Diri</div>
+            <div class="form-field"><label>Nama Lengkap</label><input id="gdNama" placeholder="Nama lengkap guru"></div>
+            <div class="form-row">
+              <div class="form-field"><label>Tempat Lahir</label><input id="gdTempatLahir" placeholder="Kota"></div>
+              <div class="form-field"><label>Tanggal Lahir</label><input type="date" id="gdTglLahir"></div>
+            </div>
+            <div class="form-field"><label>NIP</label><input id="gdNIP" placeholder="Nomor Induk Pegawai"></div>
+            <div class="form-field"><label>Mata Pelajaran / Jabatan</label><input id="gdMapel" placeholder="Guru Matematika / Wali Kelas"></div>
+            <div class="form-field"><label>No. Kontak</label><input id="gdKontak" placeholder="Nomor HP/WA"></div>
+          </div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px">📌 Info Tambahan</div>
+            <div class="form-field"><label>Alamat</label><textarea id="gdAlamat" placeholder="Alamat lengkap"></textarea></div>
+            <div class="form-field"><label>Email</label><input type="email" id="gdEmail" placeholder="email@guru.sch.id"></div>
+            <div class="form-field"><label>Motto / Visi</label><textarea id="gdMotto" placeholder="Motto atau visi hidup Anda" style="min-height:60px"></textarea></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ PENGATURAN ══════ -->
+      <div class="page" id="page-pengaturan">
+        <div class="section-header">
+          <div><div class="section-title">⚙️ Pengaturan</div><div class="section-subtitle">Konfigurasi tahun pelajaran dan sistem</div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px">📅 Tahun Pelajaran</div>
+            <div class="form-field"><label>Tahun Pelajaran</label><input id="sTahunPelajaran" placeholder="misal: 2024/2025" value="2024/2025"></div>
+            <div class="form-field"><label>Semester Aktif</label>
+              <div class="semester-tabs">
+                <button class="semester-tab active" id="semGanjilBtn" onclick="setSemester('ganjil')">Semester Ganjil (Juli–Desember)</button>
+                <button class="semester-tab" id="semGenapBtn" onclick="setSemester('genap')">Semester Genap (Januari–Juni)</button>
+              </div>
+            </div>
+            <div class="form-field"><label>Periode Ganjil</label>
+              <div style="display:flex;gap:8px">
+                <input type="date" id="sPeriodeGanjilMulai" style="flex:1;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-family:'Exo 2',sans-serif;font-size:13px;outline:none">
+                <input type="date" id="sPeriodeGanjilAkhir" style="flex:1;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-family:'Exo 2',sans-serif;font-size:13px;outline:none">
+              </div>
+            </div>
+            <div class="form-field"><label>Periode Genap</label>
+              <div style="display:flex;gap:8px">
+                <input type="date" id="sPeriodeGenapMulai" style="flex:1;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-family:'Exo 2',sans-serif;font-size:13px;outline:none">
+                <input type="date" id="sPeriodeGenapAkhir" style="flex:1;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-family:'Exo 2',sans-serif;font-size:13px;outline:none">
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="savePengaturan()">💾 Simpan Pengaturan</button>
+          </div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px">🔐 Keamanan</div>
+            <div class="form-field"><label>Password Baru</label><input type="password" id="sPasswordBaru" placeholder="Kosongkan jika tidak ingin mengubah"></div>
+            <div class="form-field"><label>Konfirmasi Password</label><input type="password" id="sPasswordKonfirmasi" placeholder="Ulangi password baru"></div>
+            <button class="btn btn-outline" onclick="gantiPassword()">🔑 Ganti Password</button>
+            <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--gray-200)">
+              <div class="card-title" style="margin-bottom:12px;font-size:14px">🗑️ Reset Data</div>
+              <p style="font-size:12px;color:var(--gray-500);margin-bottom:12px">Perhatian: tindakan ini tidak dapat dibatalkan.</p>
+              <button class="btn btn-danger btn-sm" onclick="if(confirm('YAKIN ingin menghapus SEMUA data?'))resetAllData()">⚠️ Reset Semua Data</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ ORTU VIEW ══════ -->
+      <div class="page" id="page-ortuView">
+        <div class="section-header">
+          <div><div class="section-title" id="ortuTitle">Data Siswa</div><div class="section-subtitle" id="ortuSubtitle">Informasi akademik anak Anda</div></div>
+        </div>
+        <div class="grid-2" id="ortuContent"></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ════════════ MODALS ════════════ -->
+<!-- Modal Kelas -->
+<div class="modal-overlay" id="modalKelas">
+  <div class="modal">
+    <div class="modal-title" id="modalKelasTitle">Tambah Kelas</div>
+    <div class="form-field"><label>Nama Kelas</label><input id="mkNama" placeholder="misal: VII-A, VIII-B, IX-C"></div>
+    <div class="form-field"><label>Wali Kelas</label><input id="mkWali" placeholder="Nama wali kelas"></div>
+    <div class="modal-actions">
+      <button class="btn btn-gray" onclick="closeModal('modalKelas')">Batal</button>
+      <button class="btn btn-primary" onclick="saveKelas()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Siswa -->
+<div class="modal-overlay" id="modalSiswa">
+  <div class="modal">
+    <div class="modal-title" id="modalSiswaTitle">Tambah Siswa</div>
+    <div class="form-row">
+      <div class="form-field"><label>Nama Siswa <span style="color:red">*</span></label><input id="msNama" placeholder="Nama lengkap siswa"></div>
+      <div class="form-field"><label>Jenis Kelamin <span style="color:red">*</span></label>
+        <select id="msJK"><option value="L">Laki-laki</option><option value="P">Perempuan</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>NISN</label><input id="msNISN" placeholder="Nomor Induk Siswa Nasional"></div>
+      <div class="form-field"><label>Kelas</label>
+        <select id="msKelas"><option value="">-- Pilih Kelas --</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>Nama Ayah</label><input id="msNamaAyah" placeholder="Nama ayah"></div>
+      <div class="form-field"><label>Pekerjaan Ayah</label><input id="msPekerjaanAyah" placeholder="Pekerjaan ayah"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>Nama Ibu</label><input id="msNamaIbu" placeholder="Nama ibu"></div>
+      <div class="form-field"><label>Pekerjaan Ibu</label><input id="msPekerjaanIbu" placeholder="Pekerjaan ibu"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-gray" onclick="closeModal('modalSiswa')">Batal</button>
+      <button class="btn btn-primary" onclick="saveSiswa()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Tugas -->
+<div class="modal-overlay" id="modalTugas">
+  <div class="modal">
+    <div class="modal-title">Tambah Tugas</div>
+    <div class="form-field"><label>Judul Tugas</label><input id="mtJudul" placeholder="Judul tugas"></div>
+    <div class="form-row">
+      <div class="form-field"><label>Kelas</label>
+        <select id="mtKelas"><option value="">-- Semua Kelas --</option></select>
+      </div>
+      <div class="form-field"><label>Mata Pelajaran</label>
+        <select id="mtMapel"><option value="">-- Pilih --</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>Tenggat</label><input type="date" id="mtTenggat"></div>
+      <div class="form-field"><label>File Tugas</label><input type="file" id="mtFile" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"></div>
+    </div>
+    <div class="form-field"><label>Deskripsi</label><textarea id="mtDeskripsi" placeholder="Keterangan tugas..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-gray" onclick="closeModal('modalTugas')">Batal</button>
+      <button class="btn btn-primary" onclick="saveTugas()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════ STATE ════════════
+let S = {
+  loggedIn: false,
+  userType: 'guru',
+  currentUser: '',
+  currentPage: 'dashboard',
+  password: '12345',
+  logoB64: null,
+  schoolLogoB64: null,
+  // Data
+  sekolah: { nama:'SMP Negeri 10 Tual', alamat:'Tual, Maluku', npsn:'', kepsek:'', telp:'', email:'', web:'', akreditasi:'A (Unggul)' },
+  kelas: [],
+  siswa: [],
+  absenSiswa: {}, // {kelasId_bulan_siswaId: status}
+  nilai: {},      // {kelasId_mapel_siswaId: {h1,h2,h3,mid,pas}}
+  absenGuru: {},  // {bulan_tanggal: status}
+  jurnal: {},     // {kelasId_bulan_tanggal: kegiatan}
+  tugas: [],
+  biodata: { nama:'', tempatLahir:'', tglLahir:'', nip:'', mapel:'', kontak:'', alamat:'', email:'', motto:'' },
+  pengaturan: { tahun:'2024/2025', semester:'ganjil' },
+  editKelasIdx: -1,
+  editSiswaIdx: -1,
+};
+
+const MAPEL = [
+  'Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia',
+  'Matematika','Ilmu Pengetahuan Alam dan Sosial','Prakarya',
+  'Pendidikan Jasmani Olahraga dan Kesehatan','Bahasa Inggris',
+  'Informatika','Koding dan Kecerdasan Artificial','Mulok'
+];
+const MONTHS = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const DAYS = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+const ATT_CYCLE = ['.',  'S', 'I', 'A', ''];
+
+// ════════════ STORAGE ════════════
+function save() { try { localStorage.setItem('smpn10_data', JSON.stringify(S)); } catch(e){} }
+function load() {
+  try {
+    const d = localStorage.getItem('smpn10_data');
+    if(d) { const p=JSON.parse(d); Object.assign(S,p); }
+  } catch(e){}
+}
+
+// ════════════ INIT ════════════
+window.onload = () => {
+  load();
+  // Set bulan sekarang di select
+  const now = new Date();
+  if(document.getElementById('absenBulanSelect')) document.getElementById('absenBulanSelect').value = now.getMonth();
+  if(document.getElementById('absenGuruBulan')) document.getElementById('absenGuruBulan').value = now.getMonth();
+  if(document.getElementById('jurnalBulan')) document.getElementById('jurnalBulan').value = now.getMonth();
+  populateMapelSelects();
+  updateDateDisplay();
+};
+
+function updateDateDisplay() {
+  const now = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  const el = document.getElementById('dashDate');
+  if(el) el.textContent = 'Hari ini, ' + now.toLocaleDateString('id-ID', opts);
+}
+
+function populateMapelSelects() {
+  ['nilaiMapelSelect','mtMapel'].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.innerHTML = '<option value="">-- Pilih Mata Pelajaran --</option>';
+    MAPEL.forEach(m => { const o=document.createElement('option'); o.value=m; o.textContent=m; el.appendChild(o); });
+  });
+}
+
+// ════════════ LOGIN ════════════
+let currentUserType = 'guru';
+function setUserType(type, btn) {
+  currentUserType = type;
+  document.querySelectorAll('.user-type-toggle button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('lblUsername').textContent = type==='guru' ? 'Nama Lengkap Guru' : 'Nama Siswa';
+  document.getElementById('inpPassword').placeholder = type==='guru' ? '12345' : 'NISN Siswa';
+}
+
+function doLogin() {
+  const username = document.getElementById('inpUsername').value.trim();
+  const password = document.getElementById('inpPassword').value.trim();
+  const errEl = document.getElementById('loginErr');
+  errEl.style.display='none';
+
+  if(!username || !password) { showErr('Isi semua field!'); return; }
+
+  if(currentUserType === 'guru') {
+    if(password !== S.password) { showErr('Password salah!'); return; }
+    S.loggedIn = true; S.userType = 'guru'; S.currentUser = username;
+    save(); enterApp();
+  } else {
+    // Orang tua: username = nama siswa, password = NISN
+    const siswa = S.siswa.find(s => s.nama.toLowerCase() === username.toLowerCase() && s.nisn === password);
+    if(!siswa) { showErr('Nama siswa atau NISN tidak cocok!'); return; }
+    S.loggedIn = true; S.userType = 'orangtua'; S.currentUser = siswa.nama; S.currentSiswaId = siswa.id;
+    save(); enterAppOrtu(siswa);
+  }
+
+  function showErr(msg) { errEl.textContent=msg; errEl.style.display='block'; }
+}
+
+function enterApp() {
+  document.getElementById('loginPage').classList.add('hide');
+  setTimeout(() => {
+    document.getElementById('loginPage').style.display='none';
+    document.getElementById('app').style.display='flex';
+    document.getElementById('app').classList.add('visible');
+    refreshAll();
+    showPage('dashboard', null);
+  }, 600);
+}
+
+function enterAppOrtu(siswa) {
+  document.getElementById('loginPage').classList.add('hide');
+  setTimeout(() => {
+    document.getElementById('loginPage').style.display='none';
+    document.getElementById('app').style.display='flex';
+    document.getElementById('app').classList.add('visible');
+    // Hide guru tabs for ortu
+    document.querySelectorAll('.topnav-tab').forEach(t => t.style.display='none');
+    document.querySelectorAll('.sidebar-item').forEach(t => t.style.display='none');
+    showOrtuView(siswa);
+  }, 600);
+}
+
+function showOrtuView(siswa) {
+  showPage('ortuView', null);
+  document.getElementById('ortuTitle').textContent = '👤 Data Siswa: ' + siswa.nama;
+  document.getElementById('ortuSubtitle').textContent = 'Kelas: ' + (S.kelas.find(k=>k.id===siswa.kelasId)||{nama:'-'}).nama;
+
+  const kelas = S.kelas.find(k=>k.id===siswa.kelasId);
+  let html = '';
+
+  // Absen summary
+  let absenSummary = '<div class="card"><div class="card-title" style="margin-bottom:12px">📋 Rekap Absensi</div><div style="display:flex;gap:16px;flex-wrap:wrap">';
+  MONTHS.forEach((bln,mi) => {
+    let H=0,S_=0,I=0,A=0;
+    const days = new Date(2024, mi+1, 0).getDate();
+    for(let d=1;d<=days;d++) {
+      const key=`${siswa.kelasId}_${mi}_${siswa.id}_${d}`;
+      const v=S.absenSiswa[key]||'';
+      if(v==='.')H++; else if(v==='S')S_++; else if(v==='I')I++; else if(v==='A')A++;
+    }
+    absenSummary+=`<div style="text-align:center;padding:8px;background:var(--gray-50);border-radius:8px;min-width:80px"><div style="font-size:11px;font-weight:700;color:var(--blue-600)">${bln}</div><div style="font-size:12px;margin-top:4px">✅${H} 🏥${S_} 📋${I} ❌${A}</div></div>`;
+  });
+  absenSummary += '</div></div>';
+
+  // Nilai summary
+  let nilaiSummary = '<div class="card"><div class="card-title" style="margin-bottom:12px">📝 Nilai per Mata Pelajaran</div><div class="table-wrap"><table><thead><tr><th>Mata Pelajaran</th><th>H1</th><th>H2</th><th>H3</th><th>MID</th><th>PAS</th><th>Raport</th></tr></thead><tbody>';
+  MAPEL.forEach(mapel => {
+    const key=`${siswa.kelasId}_${mapel}_${siswa.id}`;
+    const n=S.nilai[key]||{};
+    const raport=calcRaport(n);
+    nilaiSummary+=`<tr><td>${mapel}</td><td>${n.h1||'-'}</td><td>${n.h2||'-'}</td><td>${n.h3||'-'}</td><td>${n.mid||'-'}</td><td>${n.pas||'-'}</td><td>${raport?`<span class="nilai-badge ${nilaiClass(raport)}">${raport}</span>`:'-'}</td></tr>`;
+  });
+  nilaiSummary += '</tbody></table></div></div>';
+
+  document.getElementById('ortuContent').innerHTML = absenSummary + nilaiSummary;
+}
+
+function doLogout() {
+  S.loggedIn = false; save();
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('app').style.display='none';
+  document.getElementById('loginPage').style.display='flex';
+  document.getElementById('loginPage').classList.remove('hide');
+  document.getElementById('inpUsername').value='';
+  document.getElementById('inpPassword').value='';
+  document.getElementById('loginErr').style.display='none';
+}
+
+// ════════════ NAVIGATION ════════════
+function showPage(page, tabEl) {
+  if(tabEl) {
+    document.querySelectorAll('.topnav-tab').forEach(t=>t.classList.remove('active'));
+    tabEl.classList.add('active');
+  }
+  document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+
+  const pageEl = document.getElementById('page-'+page);
+  if(pageEl) pageEl.classList.add('active');
+  S.currentPage = page;
+
+  // Refresh data on page switch
+  if(page==='dashboard') refreshDashboard();
+  if(page==='dataKelas') renderKelasTable();
+  if(page==='siswa') { populateKelasSelects(); renderSiswaTable(); }
+  if(page==='absenSiswa') { populateKelasSelects(); renderAbsenSiswa(); }
+  if(page==='nilaiSiswa') { populateKelasSelects(); renderNilai(); }
+  if(page==='absenGuru') renderAbsenGuru();
+  if(page==='jurnal') { populateKelasSelects(); renderJurnal(); }
+  if(page==='tugas') { populateKelasSelects(); renderTugas(); }
+  if(page==='biodataGuru') loadBiodata();
+  if(page==='pengaturan') loadPengaturan();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+}
+
+// ════════════ MODAL HELPERS ════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ════════════ TOAST ════════════
+function toast(msg, type='success') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+// ════════════ LOGO ════════════
+function uploadLogo(input) {
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    S.logoB64 = e.target.result;
+    document.getElementById('loginLogoImg').src = e.target.result;
+    document.getElementById('loginLogoImg').style.display='block';
+    document.getElementById('loginLogoEmoji').style.display='none';
+    updateNavLogo();
+    save();
+  };
+  reader.readAsDataURL(file);
+}
+
+function uploadSchoolLogo(input) {
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    S.schoolLogoB64 = e.target.result;
+    document.getElementById('schoolLogoImg').src = e.target.result;
+    document.getElementById('schoolLogoImg').style.display='block';
+    document.getElementById('schoolLogoEmoji').style.display='none';
+    updateDashSchoolLogo();
+    save();
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateNavLogo() {
+  if(S.logoB64) {
+    document.getElementById('navLogo').src = S.logoB64;
+    document.getElementById('navLogo').style.display='block';
+    document.getElementById('navLogoEmoji').style.display='none';
+  }
+}
+
+function updateDashSchoolLogo() {
+  if(S.schoolLogoB64) {
+    const wrap = document.getElementById('dashSchoolLogoWrap');
+    wrap.innerHTML = `<img src="${S.schoolLogoB64}" style="width:100%;height:100%;object-fit:cover;border-radius:12px">`;
+  }
+}
+
+// ════════════ REFRESH ALL ════════════
+function refreshAll() {
+  updateNavLogo();
+  if(S.logoB64) {
+    document.getElementById('loginLogoImg').src = S.logoB64;
+    document.getElementById('loginLogoImg').style.display='block';
+    document.getElementById('loginLogoEmoji').style.display='none';
+  }
+  if(S.schoolLogoB64) {
+    document.getElementById('schoolLogoImg').src = S.schoolLogoB64;
+    document.getElementById('schoolLogoImg').style.display='block';
+    document.getElementById('schoolLogoEmoji').style.display='none';
+  }
+  populateKelasSelects();
+  document.getElementById('topYear').textContent = S.pengaturan.tahun;
+  const init = S.biodata.nama ? S.biodata.nama[0].toUpperCase() : 'G';
+  document.getElementById('userAvatar').textContent = init;
+  refreshDashboard();
+  renderSidebarClasses();
+}
+
+function refreshDashboard() {
+  // Stats
+  document.getElementById('statSiswa').textContent = S.siswa.length;
+  document.getElementById('statKelas').textContent = S.kelas.length;
+  document.getElementById('statTugas').textContent = S.tugas.length;
+
+  // Kehadiran hari ini (guru)
+  const today = new Date();
+  const m = today.getMonth();
+  const d = today.getDate();
+  let totalHadir=0, totalSiswa=0;
+  S.siswa.forEach(siswa => {
+    const key=`${siswa.kelasId}_${m}_${siswa.id}_${d}`;
+    const v=S.absenSiswa[key];
+    if(v==='.') totalHadir++;
+    if(v) totalSiswa++;
+  });
+  document.getElementById('statHadir').textContent = totalSiswa>0 ? Math.round(totalHadir/totalSiswa*100)+'%' : '-';
+
+  // Profile
+  const b = S.biodata;
+  document.getElementById('dashNamaGuru').textContent = b.nama || S.currentUser || 'Nama Guru';
+  document.getElementById('dashNIP').textContent = 'NIP: ' + (b.nip||'-');
+  document.getElementById('dashKontak').textContent = b.kontak||'-';
+  document.getElementById('dashAlamat').textContent = b.alamat||'-';
+  document.getElementById('dashMotto').textContent = b.motto||'-';
+  const avatarChar = (b.nama||S.currentUser||'G')[0].toUpperCase();
+  document.getElementById('dashAvatarChar').textContent = avatarChar;
+  document.getElementById('userAvatar').textContent = avatarChar;
+
+  // Sekolah
+  document.getElementById('dashNamaSekolah').textContent = S.sekolah.nama;
+  document.getElementById('dashAlamatSekolah').textContent = S.sekolah.alamat;
+  document.getElementById('dashNPSN').textContent = 'NPSN: '+(S.sekolah.npsn||'-');
+  document.getElementById('dashTahun').textContent = S.pengaturan.tahun;
+  document.getElementById('topYear').textContent = S.pengaturan.tahun;
+
+  // Semester label
+  document.getElementById('dashSemLabel').textContent = S.pengaturan.semester==='ganjil'?'Semester Ganjil':'Semester Genap';
+
+  updateDashSchoolLogo();
+  renderSidebarClasses();
+}
+
+function renderSidebarClasses() {
+  const el = document.getElementById('sidebarClassList');
+  if(!el) return;
+  el.innerHTML = S.kelas.length===0
+    ? '<div style="font-size:12px;color:var(--gray-400);padding:8px 12px">Belum ada kelas</div>'
+    : S.kelas.map(k=>`<div class="sidebar-class" onclick="filterByKelas('${k.id}')"><div class="sidebar-class-dot"></div><span>${k.nama}</span></div>`).join('');
+}
+
+function filterByKelas(kelasId) {
+  showPage('siswa',null);
+  setTimeout(()=>{ document.getElementById('siswaKelasFilter').value=kelasId; renderSiswaTable(); },100);
+}
+
+// ════════════ DATA SEKOLAH ════════════
+function saveSekolah() {
+  S.sekolah.nama = document.getElementById('inpNamaSekolah').value;
+  S.sekolah.npsn = document.getElementById('inpNPSN').value;
+  S.sekolah.alamat = document.getElementById('inpAlamatSekolah').value;
+  S.sekolah.kepsek = document.getElementById('inpKepsek').value;
+  S.sekolah.telp = document.getElementById('inpTelpSekolah').value;
+  S.sekolah.email = document.getElementById('inpEmailSekolah').value;
+  S.sekolah.web = document.getElementById('inpWebSekolah').value;
+  S.sekolah.akreditasi = document.getElementById('inpAkreditasi').value;
+  save(); toast('Data sekolah berhasil disimpan ✓');
+  refreshDashboard();
+}
+
+// ════════════ DATA KELAS ════════════
+function openAddKelas(idx=-1) {
+  S.editKelasIdx = idx;
+  if(idx>=0) {
+    document.getElementById('modalKelasTitle').textContent='Edit Kelas';
+    document.getElementById('mkNama').value = S.kelas[idx].nama;
+    document.getElementById('mkWali').value = S.kelas[idx].wali||'';
+  } else {
+    document.getElementById('modalKelasTitle').textContent='Tambah Kelas';
+    document.getElementById('mkNama').value='';
+    document.getElementById('mkWali').value='';
+  }
+  openModal('modalKelas');
+}
+
+function saveKelas() {
+  const nama = document.getElementById('mkNama').value.trim();
+  const wali = document.getElementById('mkWali').value.trim();
+  if(!nama) { toast('Nama kelas wajib diisi!','error'); return; }
+  if(S.editKelasIdx>=0) {
+    S.kelas[S.editKelasIdx].nama = nama;
+    S.kelas[S.editKelasIdx].wali = wali;
+  } else {
+    S.kelas.push({ id:'kls_'+Date.now(), nama, wali });
+  }
+  save(); closeModal('modalKelas'); renderKelasTable();
+  populateKelasSelects(); renderSidebarClasses();
+  toast(S.editKelasIdx>=0?'Kelas berhasil diperbarui ✓':'Kelas berhasil ditambahkan ✓');
+  S.editKelasIdx=-1;
+}
+
+function deleteKelas(idx) {
+  if(!confirm('Hapus kelas ini? Data siswa di kelas ini juga akan terhapus.')) return;
+  const kid = S.kelas[idx].id;
+  S.kelas.splice(idx,1);
+  S.siswa = S.siswa.filter(s=>s.kelasId!==kid);
+  save(); renderKelasTable(); populateKelasSelects(); renderSidebarClasses();
+  toast('Kelas dihapus','error');
+}
+
+function renderKelasTable() {
+  const tbody = document.getElementById('kelasTbody');
+  const empty = document.getElementById('kelasEmpty');
+  if(!tbody) return;
+  if(S.kelas.length===0) { tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  tbody.innerHTML = S.kelas.map((k,i)=>`
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${k.nama}</strong></td>
+      <td>${k.wali||'-'}</td>
+      <td><span class="badge badge-blue">${S.siswa.filter(s=>s.kelasId===k.id).length} siswa</span></td>
+      <td>
+        <button class="btn btn-outline btn-xs" onclick="openAddKelas(${i})">✏️ Edit</button>
+        <button class="btn btn-danger btn-xs" style="margin-left:4px" onclick="deleteKelas(${i})">🗑️</button>
+      </td>
+    </tr>`).join('');
+}
+
+// ════════════ POPULATE SELECTS ════════════
+function populateKelasSelects() {
+  const opts = '<option value="">-- Pilih Kelas --</option>' + S.kelas.map(k=>`<option value="${k.id}">${k.nama}</option>`).join('');
+  ['siswaKelasFilter','absenKelasSelect','nilaiKelasSelect','jurnalKelas','msKelas','mtKelas'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = opts;
+  });
+  populateMapelSelects();
+}
+
+// ════════════ DATA SISWA ════════════
+function openAddSiswa(idx=-1) {
+  S.editSiswaIdx = idx;
+  populateKelasSelects();
+  if(idx>=0) {
+    const s=S.siswa[idx];
+    document.getElementById('modalSiswaTitle').textContent='Edit Siswa';
+    document.getElementById('msNama').value=s.nama;
+    document.getElementById('msJK').value=s.jk;
+    document.getElementById('msNISN').value=s.nisn||'';
+    document.getElementById('msKelas').value=s.kelasId||'';
+    document.getElementById('msNamaAyah').value=s.namaAyah||'';
+    document.getElementById('msPekerjaanAyah').value=s.pekerjaanAyah||'';
+    document.getElementById('msNamaIbu').value=s.namaIbu||'';
+    document.getElementById('msPekerjaanIbu').value=s.pekerjaanIbu||'';
+  } else {
+    document.getElementById('modalSiswaTitle').textContent='Tambah Siswa';
+    ['msNama','msNISN','msNamaAyah','msPekerjaanAyah','msNamaIbu','msPekerjaanIbu'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('msJK').value='L';
+    const kFilter = document.getElementById('siswaKelasFilter').value;
+    document.getElementById('msKelas').value = kFilter;
+  }
+  openModal('modalSiswa');
+}
+
+function saveSiswa() {
+  const nama = document.getElementById('msNama').value.trim();
+  const jk = document.getElementById('msJK').value;
+  if(!nama) { toast('Nama siswa wajib diisi!','error'); return; }
+  const data = {
+    id: S.editSiswaIdx>=0 ? S.siswa[S.editSiswaIdx].id : 'siswa_'+Date.now(),
+    nama, jk,
+    nisn: document.getElementById('msNISN').value.trim(),
+    kelasId: document.getElementById('msKelas').value,
+    namaAyah: document.getElementById('msNamaAyah').value.trim(),
+    pekerjaanAyah: document.getElementById('msPekerjaanAyah').value.trim(),
+    namaIbu: document.getElementById('msNamaIbu').value.trim(),
+    pekerjaanIbu: document.getElementById('msPekerjaanIbu').value.trim(),
+  };
+  if(S.editSiswaIdx>=0) S.siswa[S.editSiswaIdx]=data;
+  else S.siswa.push(data);
+  S.siswa.sort((a,b)=>a.nama.localeCompare(b.nama));
+  save(); closeModal('modalSiswa'); renderSiswaTable();
+  toast(S.editSiswaIdx>=0?'Data siswa diperbarui ✓':'Siswa berhasil ditambahkan ✓');
+  S.editSiswaIdx=-1;
+  refreshDashboard();
+}
+
+function deleteSiswa(idx) {
+  if(!confirm('Hapus data siswa ini?')) return;
+  S.siswa.splice(idx,1);
+  save(); renderSiswaTable(); toast('Data siswa dihapus','error');
+  refreshDashboard();
+}
+
+function renderSiswaTable() {
+  const kelasId = document.getElementById('siswaKelasFilter').value;
+  const search = (document.getElementById('siswaSearch').value||'').toLowerCase();
+  let list = S.siswa;
+  if(kelasId) list = list.filter(s=>s.kelasId===kelasId);
+  if(search) list = list.filter(s=>s.nama.toLowerCase().includes(search));
+  list.sort((a,b)=>a.nama.localeCompare(b.nama));
+
+  const tbody = document.getElementById('siswaTbody');
+  const empty = document.getElementById('siswaEmpty');
+  const badge = document.getElementById('siswaBadge');
+  if(!tbody) return;
+
+  badge.textContent = list.length+' siswa';
+
+  if(list.length===0) { tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+
+  const realIdx = list.map(s=>S.siswa.indexOf(s));
+  tbody.innerHTML = list.map((s,i)=>{
+    const kelas = S.kelas.find(k=>k.id===s.kelasId);
+    return `<tr>
+      <td>${i+1}</td>
+      <td><strong>${s.nama}</strong></td>
+      <td><span class="badge ${s.jk==='L'?'badge-blue':'badge-purple'}">${s.jk==='L'?'♂ L':'♀ P'}</span></td>
+      <td>${s.nisn||'-'}</td>
+      <td>${s.namaAyah||'-'}</td>
+      <td>${s.pekerjaanAyah||'-'}</td>
+      <td>${s.namaIbu||'-'}</td>
+      <td>${s.pekerjaanIbu||'-'}</td>
+      <td><span class="badge badge-green">${kelas?kelas.nama:'-'}</span></td>
+      <td>
+        <button class="btn btn-outline btn-xs" onclick="openAddSiswa(${realIdx[i]})">✏️</button>
+        <button class="btn btn-danger btn-xs" style="margin-left:4px" onclick="deleteSiswa(${realIdx[i]})">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ════════════ IMPORT/EXPORT SISWA ════════════
+function downloadTemplateSiswa() {
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet([
+    ['Nama','Jenis Kelamin (L/P)','NISN','Nama Ayah','Pekerjaan Ayah','Nama Ibu','Pekerjaan Ibu','Kelas'],
+    ['Ahmad Fauzi','L','1234567890','Budi Santoso','Petani','Siti Rahayu','Ibu Rumah Tangga','VII-A'],
+    ['Siti Aisyah','P','0987654321','Hasan','PNS','Fatimah','Guru','VII-A'],
+  ]);
+  XLSX.utils.book_append_sheet(wb, ws, 'Template Siswa');
+  XLSX.writeFile(wb, 'template_data_siswa.xlsx');
+}
+
+function importSiswa(input) {
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const wb = XLSX.read(e.target.result, {type:'binary'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const data = XLSX.utils.sheet_to_json(ws, {header:1});
+      let added=0;
+      for(let r=1;r<data.length;r++) {
+        const row=data[r];
+        if(!row[0]) continue;
+        const kelasNama=(row[7]||'').toString().trim();
+        let kelas = S.kelas.find(k=>k.nama.toLowerCase()===kelasNama.toLowerCase());
+        if(!kelas && kelasNama) {
+          kelas = {id:'kls_'+Date.now()+'_'+r, nama:kelasNama, wali:''};
+          S.kelas.push(kelas);
+        }
+        S.siswa.push({
+          id:'siswa_'+Date.now()+'_'+r,
+          nama:(row[0]||'').toString().trim(),
+          jk:(row[1]||'L').toString().trim().toUpperCase(),
+          nisn:(row[2]||'').toString().trim(),
+          kelasId:kelas?kelas.id:'',
+          namaAyah:(row[3]||'').toString().trim(),
+          pekerjaanAyah:(row[4]||'').toString().trim(),
+          namaIbu:(row[5]||'').toString().trim(),
+          pekerjaanIbu:(row[6]||'').toString().trim(),
+        });
+        added++;
+      }
+      S.siswa.sort((a,b)=>a.nama.localeCompare(b.nama));
+      save(); renderSiswaTable(); populateKelasSelects(); renderSidebarClasses();
+      toast(`${added} siswa berhasil diimport ✓`);
+    } catch(err) { toast('Gagal import: '+err.message,'error'); }
+  };
+  reader.readAsBinaryString(file);
+  input.value='';
+}
+
+// ════════════ ABSEN SISWA ════════════
+function renderAbsenSiswa() {
+  const kelasId = document.getElementById('absenKelasSelect').value;
+  const bulan = parseInt(document.getElementById('absenBulanSelect').value);
+  const content = document.getElementById('absenSiswaContent');
+
+  // Update calendar
+  renderCalendar('absenCal', bulan);
+  document.getElementById('absenCalTitle').textContent = 'Kalender '+MONTHS[bulan];
+
+  if(!kelasId) { content.innerHTML='<div style="text-align:center;padding:40px;color:var(--gray-400)">Pilih kelas terlebih dahulu.</div>'; return; }
+  const siswaKelas = S.siswa.filter(s=>s.kelasId===kelasId).sort((a,b)=>a.nama.localeCompare(b.nama));
+  if(siswaKelas.length===0) { content.innerHTML='<div style="text-align:center;padding:40px;color:var(--gray-400)">Belum ada siswa di kelas ini.</div>'; return; }
+
+  const year=new Date().getFullYear();
+  const daysInMonth = new Date(year, bulan+1, 0).getDate();
+  const days=Array.from({length:daysInMonth},(_,i)=>i+1);
+
+  let html=`<div style="overflow-x:auto"><table style="min-width:700px">
+    <thead><tr><th>No</th><th>Nama Siswa</th>`;
+  days.forEach(d => {
+    const day=new Date(year,bulan,d).getDay();
+    const isWknd=day===0||day===6;
+    html+=`<th style="text-align:center;min-width:30px;${isWknd?'color:#60a5fa':''}">${d}</th>`;
+  });
+  html+='<th>H</th><th>S</th><th>I</th><th>A</th></tr></thead><tbody>';
+
+  siswaKelas.forEach((siswa,idx)=>{
+    let H=0,Sa=0,I=0,A=0;
+    html+=`<tr><td>${idx+1}</td><td style="white-space:nowrap;font-weight:600">${siswa.nama}</td>`;
+    days.forEach(d=>{
+      const key=`${kelasId}_${bulan}_${siswa.id}_${d}`;
+      const v=S.absenSiswa[key]||'';
+      if(v==='.')H++; else if(v==='S')Sa++; else if(v==='I')I++; else if(v==='A')A++;
+      const cls=v==='.'?'att-H':v==='S'?'att-S':v==='I'?'att-I':v==='A'?'att-A':'att-empty';
+      html+=`<td style="text-align:center;padding:3px"><span class="att-cell ${cls}" onclick="cycleAtt('${key}',this)">${v||'—'}</span></td>`;
+    });
+    html+=`<td style="text-align:center;font-weight:700;color:#065f46">${H}</td>
+           <td style="text-align:center;font-weight:700;color:#92400e">${Sa}</td>
+           <td style="text-align:center;font-weight:700;color:#1e40af">${I}</td>
+           <td style="text-align:center;font-weight:700;color:#991b1b">${A}</td></tr>`;
+  });
+  html+='</tbody></table></div>';
+  content.innerHTML=html;
+}
+
+function cycleAtt(key, el) {
+  const cur=S.absenSiswa[key]||'';
+  const idx=ATT_CYCLE.indexOf(cur);
+  const next=ATT_CYCLE[(idx+1)%ATT_CYCLE.length];
+  if(next==='') { delete S.absenSiswa[key]; }
+  else { S.absenSiswa[key]=next; }
+  save();
+  const cls=next==='.'?'att-H':next==='S'?'att-S':next==='I'?'att-I':next==='A'?'att-A':'att-empty';
+  el.className='att-cell '+cls;
+  el.textContent=next||'—';
+  refreshDashboard();
+}
+
+function downloadAbsenSiswa() {
+  const kelasId = document.getElementById('absenKelasSelect').value;
+  const bulan = parseInt(document.getElementById('absenBulanSelect').value);
+  if(!kelasId) { toast('Pilih kelas terlebih dahulu!','error'); return; }
+  const kelas = S.kelas.find(k=>k.id===kelasId);
+  const siswaKelas = S.siswa.filter(s=>s.kelasId===kelasId).sort((a,b)=>a.nama.localeCompare(b.nama));
+  const year=new Date().getFullYear();
+  const daysInMonth=new Date(year,bulan+1,0).getDate();
+  const header=['No','Nama Siswa',...Array.from({length:daysInMonth},(_,i)=>i+1),'H','S','I','A'];
+  const rows=[header];
+  siswaKelas.forEach((siswa,idx)=>{
+    let H=0,Sa=0,I=0,A=0;
+    const row=[idx+1,siswa.nama];
+    for(let d=1;d<=daysInMonth;d++) {
+      const v=S.absenSiswa[`${kelasId}_${bulan}_${siswa.id}_${d}`]||'';
+      row.push(v||'');
+      if(v==='.')H++; else if(v==='S')Sa++; else if(v==='I')I++; else if(v==='A')A++;
+    }
+    row.push(H,Sa,I,A); rows.push(row);
+  });
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  XLSX.utils.book_append_sheet(wb,ws,'Absen '+MONTHS[bulan]);
+  XLSX.writeFile(wb,`Absen_${kelas?kelas.nama:'Kelas'}_${MONTHS[bulan]}.xlsx`);
+}
+
+// ════════════ NILAI SISWA ════════════
+function calcRaport(n) {
+  const h1=parseFloat(n.h1)||0, h2=parseFloat(n.h2)||0, h3=parseFloat(n.h3)||0;
+  const mid=parseFloat(n.mid)||0, pas=parseFloat(n.pas)||0;
+  if(!n.h1&&!n.h2&&!n.h3&&!n.mid&&!n.pas) return null;
+  const avgH=(h1+h2+h3)/3;
+  return Math.round((avgH*0.4+mid*0.3+pas*0.3)*10)/10;
+}
+
+function nilaiClass(v) {
+  if(!v) return '';
+  if(v>=90) return 'nilai-A';
+  if(v>=75) return 'nilai-B';
+  if(v>=60) return 'nilai-C';
+  return 'nilai-D';
+}
+
+function renderNilai() {
+  const kelasId=document.getElementById('nilaiKelasSelect').value;
+  const mapel=document.getElementById('nilaiMapelSelect').value;
+  const content=document.getElementById('nilaiContent');
+  if(!kelasId||!mapel) {
+    content.innerHTML='<div style="text-align:center;padding:40px;color:var(--gray-400)">Pilih kelas dan mata pelajaran.</div>';
+    return;
+  }
+  const siswaKelas=S.siswa.filter(s=>s.kelasId===kelasId).sort((a,b)=>a.nama.localeCompare(b.nama));
+  if(siswaKelas.length===0) { content.innerHTML='<div style="text-align:center;padding:40px;color:var(--gray-400)">Belum ada siswa di kelas ini.</div>'; return; }
+
+  let html=`<div style="margin-bottom:12px;font-weight:700;color:var(--blue-700);font-family:'Rajdhani',sans-serif;font-size:15px">📚 ${mapel}</div>
+  <div class="table-wrap"><table>
+  <thead><tr><th>No</th><th>Nama Siswa</th><th>Nilai H1</th><th>Nilai H2</th><th>Nilai H3</th><th>Nilai MID</th><th>Nilai PAS</th><th>Nilai Raport</th></tr></thead>
+  <tbody>`;
+
+  siswaKelas.forEach((siswa,i)=>{
+    const key=`${kelasId}_${mapel}_${siswa.id}`;
+    const n=S.nilai[key]||{};
+    const raport=calcRaport(n);
+    html+=`<tr>
+      <td>${i+1}</td><td><strong>${siswa.nama}</strong></td>
+      <td><input class="nilai-input" type="number" min="0" max="100" value="${n.h1||''}" onchange="saveNilai('${key}','h1',this.value)"></td>
+      <td><input class="nilai-input" type="number" min="0" max="100" value="${n.h2||''}" onchange="saveNilai('${key}','h2',this.value)"></td>
+      <td><input class="nilai-input" type="number" min="0" max="100" value="${n.h3||''}" onchange="saveNilai('${key}','h3',this.value)"></td>
+      <td><input class="nilai-input" type="number" min="0" max="100" value="${n.mid||''}" onchange="saveNilai('${key}','mid',this.value)"></td>
+      <td><input class="nilai-input" type="number" min="0" max="100" value="${n.pas||''}" onchange="saveNilai('${key}','pas',this.value)"></td>
+      <td><span class="nilai-badge ${nilaiClass(raport)}">${raport||'-'}</span></td>
+    </tr>`;
+  });
+  html+='</tbody></table></div>';
+  html+=`<div style="margin-top:12px;font-size:12px;color:var(--gray-500)">💡 Nilai Raport = (Rata-rata Harian×40% + MID×30% + PAS×30%)</div>`;
+  content.innerHTML=html;
+}
+
+function saveNilai(key, field, val) {
+  if(!S.nilai[key]) S.nilai[key]={};
+  S.nilai[key][field]=val;
+  save();
+  // Re-render raport badge
+  renderNilai();
+}
+
+function downloadNilai() {
+  const kelasId=document.getElementById('nilaiKelasSelect').value;
+  const mapel=document.getElementById('nilaiMapelSelect').value;
+  if(!kelasId||!mapel) { toast('Pilih kelas dan mata pelajaran!','error'); return; }
+  const kelas=S.kelas.find(k=>k.id===kelasId);
+  const siswaKelas=S.siswa.filter(s=>s.kelasId===kelasId).sort((a,b)=>a.nama.localeCompare(b.nama));
+  const header=['No','Nama Siswa','Nilai H1','Nilai H2','Nilai H3','Nilai MID','Nilai PAS','Nilai Raport'];
+  const rows=[header];
+  siswaKelas.forEach((siswa,i)=>{
+    const key=`${kelasId}_${mapel}_${siswa.id}`;
+    const n=S.nilai[key]||{};
+    const raport=calcRaport(n);
+    rows.push([i+1,siswa.nama,n.h1||'',n.h2||'',n.h3||'',n.mid||'',n.pas||'',raport||'']);
+  });
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  XLSX.utils.book_append_sheet(wb,ws,'Nilai');
+  XLSX.writeFile(wb,`Nilai_${kelas?kelas.nama:'Kelas'}_${mapel.replace(/\s+/g,'_')}.xlsx`);
+}
+
+// ════════════ ABSEN GURU ════════════
+function renderAbsenGuru() {
+  const bulan=parseInt(document.getElementById('absenGuruBulan').value);
+  renderCalendar('absenGuruCal', bulan);
+  document.getElementById('absenGuruCalTitle').textContent='Kalender Kehadiran '+MONTHS[bulan];
+
+  const year=new Date().getFullYear();
+  const daysInMonth=new Date(year,bulan+1,0).getDate();
+  const days=Array.from({length:daysInMonth},(_,i)=>i+1);
+
+  let html=`<div style="overflow-x:auto"><table style="min-width:600px">
+    <thead><tr><th>Bulan</th>`;
+  days.forEach(d=>{
+    const day=new Date(year,bulan,d).getDay();
+    html+=`<th style="text-align:center;${day===0||day===6?'color:#60a5fa':''}">${d}</th>`;
+  });
+  html+='<th>H</th><th>S</th><th>I</th><th>A</th></tr></thead><tbody><tr>';
+  html+=`<td style="white-space:nowrap;font-weight:600">${MONTHS[bulan]} ${year}</td>`;
+
+  let H=0,Sa=0,I=0,A=0;
+  days.forEach(d=>{
+    const key=`guru_${bulan}_${d}`;
+    const v=S.absenGuru[key]||'';
+    if(v==='.')H++; else if(v==='S')Sa++; else if(v==='I')I++; else if(v==='A')A++;
+    const cls=v==='.'?'att-H':v==='S'?'att-S':v==='I'?'att-I':v==='A'?'att-A':'att-empty';
+    html+=`<td style="text-align:center;padding:3px"><span class="att-cell ${cls}" onclick="cycleAttGuru('${key}',this)">${v||'—'}</span></td>`;
+  });
+  html+=`<td style="text-align:center;font-weight:700;color:#065f46">${H}</td>
+         <td style="text-align:center;font-weight:700;color:#92400e">${Sa}</td>
+         <td style="text-align:center;font-weight:700;color:#1e40af">${I}</td>
+         <td style="text-align:center;font-weight:700;color:#991b1b">${A}</td>`;
+  html+='</tr></tbody></table></div>';
+  document.getElementById('absenGuruContent').innerHTML=html;
+}
+
+function cycleAttGuru(key,el) {
+  const cur=S.absenGuru[key]||'';
+  const idx=ATT_CYCLE.indexOf(cur);
+  const next=ATT_CYCLE[(idx+1)%ATT_CYCLE.length];
+  if(next==='') delete S.absenGuru[key]; else S.absenGuru[key]=next;
+  save();
+  const cls=next==='.'?'att-H':next==='S'?'att-S':next==='I'?'att-I':next==='A'?'att-A':'att-empty';
+  el.className='att-cell '+cls; el.textContent=next||'—';
+}
+
+// ════════════ JURNAL ════════════
+function renderJurnal() {
+  const kelasId=document.getElementById('jurnalKelas').value;
+  const bulan=parseInt(document.getElementById('jurnalBulan').value);
+  renderCalendar('jurnalCal',bulan);
+  document.getElementById('jurnalCalTitle').textContent='Kalender Jurnal '+MONTHS[bulan];
+
+  if(!kelasId) { document.getElementById('jurnalContent').innerHTML='<div style="text-align:center;padding:40px;color:var(--gray-400)">Pilih kelas terlebih dahulu.</div>'; return; }
+
+  const year=new Date().getFullYear();
+  const daysInMonth=new Date(year,bulan+1,0).getDate();
+  let html='<div class="card-title" style="margin-bottom:16px">📔 Jurnal Kegiatan Harian</div>';
+
+  for(let d=1;d<=daysInMonth;d++) {
+    const date=new Date(year,bulan,d);
+    const dayName=DAYS[date.getDay()];
+    const isWknd=date.getDay()===0||date.getDay()===6;
+    const key=`${kelasId}_${bulan}_${d}`;
+    const val=S.jurnal[key]||'';
+    html+=`<div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:8px;padding:8px;border-radius:8px;${isWknd?'background:var(--blue-50)':''}">
+      <div style="min-width:80px;font-size:12px;font-weight:700;color:${isWknd?'var(--blue-500)':'var(--gray-600)'};padding-top:10px">${dayName}, ${d}</div>
+      <textarea class="form-field" style="flex:1;margin:0;min-height:50px;resize:vertical;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-family:'Exo 2',sans-serif;font-size:13px;outline:none"
+        placeholder="Isi kegiatan pembelajaran..." id="jurnal_${key}" onchange="saveJurnalEntry('${key}',this.value)">${val}</textarea>
+    </div>`;
+  }
+  document.getElementById('jurnalContent').innerHTML=html;
+}
+
+function saveJurnalEntry(key,val) {
+  if(val.trim()) S.jurnal[key]=val; else delete S.jurnal[key];
+  save();
+}
+
+function saveJurnal() {
+  // Auto-save from textarea onchange, but manual save also available
+  const kelasId=document.getElementById('jurnalKelas').value;
+  const bulan=parseInt(document.getElementById('jurnalBulan').value);
+  if(!kelasId) { toast('Pilih kelas terlebih dahulu!','error'); return; }
+  const year=new Date().getFullYear();
+  const daysInMonth=new Date(year,bulan+1,0).getDate();
+  for(let d=1;d<=daysInMonth;d++) {
+    const key=`${kelasId}_${bulan}_${d}`;
+    const el=document.getElementById('jurnal_'+key);
+    if(el) saveJurnalEntry(key,el.value);
+  }
+  toast('Jurnal berhasil disimpan ✓');
+}
+
+// ════════════ TUGAS ════════════
+function openAddTugas() {
+  populateKelasSelects();
+  document.getElementById('mtJudul').value='';
+  document.getElementById('mtDeskripsi').value='';
+  document.getElementById('mtTenggat').value='';
+  openModal('modalTugas');
+}
+
+function saveTugas() {
+  const judul=document.getElementById('mtJudul').value.trim();
+  if(!judul) { toast('Judul tugas wajib diisi!','error'); return; }
+  const fileInput=document.getElementById('mtFile');
+  const tugas={
+    id:'tugas_'+Date.now(),
+    judul,
+    kelasId:document.getElementById('mtKelas').value,
+    mapel:document.getElementById('mtMapel').value,
+    tenggat:document.getElementById('mtTenggat').value,
+    deskripsi:document.getElementById('mtDeskripsi').value,
+    fileName:fileInput.files[0]?fileInput.files[0].name:'',
+    fileType:fileInput.files[0]?fileInput.files[0].type:'',
+    tanggal:new Date().toLocaleDateString('id-ID'),
+  };
+  // Store file as base64
+  if(fileInput.files[0]) {
+    const reader=new FileReader();
+    reader.onload=e=>{ tugas.fileData=e.target.result; S.tugas.push(tugas); save(); closeModal('modalTugas'); renderTugas(); toast('Tugas berhasil ditambahkan ✓'); refreshDashboard(); };
+    reader.readAsDataURL(fileInput.files[0]);
+  } else {
+    S.tugas.push(tugas); save(); closeModal('modalTugas'); renderTugas(); toast('Tugas berhasil ditambahkan ✓'); refreshDashboard();
+  }
+}
+
+function deleteTugas(id) {
+  if(!confirm('Hapus tugas ini?')) return;
+  S.tugas=S.tugas.filter(t=>t.id!==id);
+  save(); renderTugas(); toast('Tugas dihapus','error'); refreshDashboard();
+}
+
+function downloadTugas(id) {
+  const t=S.tugas.find(t=>t.id===id);
+  if(!t||!t.fileData) { toast('Tidak ada file untuk diunduh','error'); return; }
+  const a=document.createElement('a');
+  a.href=t.fileData; a.download=t.fileName||'file';
+  a.click();
+}
+
+function renderTugas() {
+  const list=document.getElementById('tugasList');
+  const empty=document.getElementById('tugasEmpty');
+  if(!list) return;
+  if(S.tugas.length===0) { list.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  const kelas=id=>S.kelas.find(k=>k.id===id);
+  list.innerHTML=S.tugas.map(t=>`
+    <div class="task-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px">
+        <div>
+          <div style="font-weight:700;font-size:15px;color:var(--gray-800)">${t.judul}</div>
+          <div style="font-size:12px;color:var(--gray-500);margin-top:3px">${t.tanggal}</div>
+        </div>
+        <button class="btn-icon" onclick="deleteTugas('${t.id}')" style="font-size:14px;flex-shrink:0">🗑️</button>
+      </div>
+      ${t.mapel?`<span class="badge badge-blue" style="margin-bottom:8px">${t.mapel}</span>`:''}
+      ${t.kelasId&&kelas(t.kelasId)?`<span class="badge badge-green" style="margin-left:4px;margin-bottom:8px">${kelas(t.kelasId).nama}</span>`:''}
+      ${t.deskripsi?`<div style="font-size:13px;color:var(--gray-600);margin-bottom:10px">${t.deskripsi}</div>`:''}
+      ${t.tenggat?`<div style="font-size:12px;color:var(--gray-500);margin-bottom:10px">⏰ Tenggat: ${new Date(t.tenggat).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}</div>`:''}
+      ${t.fileName?`<div style="display:flex;align-items:center;gap:8px;background:var(--gray-50);padding:8px;border-radius:8px">
+        <span style="font-size:20px">${t.fileType&&t.fileType.includes('image')?'🖼️':t.fileType&&t.fileType.includes('pdf')?'📄':'📁'}</span>
+        <span style="font-size:12px;color:var(--gray-600);flex:1;word-break:break-all">${t.fileName}</span>
+        <button class="btn btn-primary btn-xs" onclick="downloadTugas('${t.id}')">⬇️ Unduh</button>
+      </div>`:'<div style="color:var(--gray-400);font-size:12px">Tidak ada file terlampir</div>'}
+    </div>`).join('');
+}
+
+// ════════════ BIODATA GURU ════════════
+function loadBiodata() {
+  const b=S.biodata;
+  document.getElementById('gdNama').value=b.nama||'';
+  document.getElementById('gdTempatLahir').value=b.tempatLahir||'';
+  document.getElementById('gdTglLahir').value=b.tglLahir||'';
+  document.getElementById('gdNIP').value=b.nip||'';
+  document.getElementById('gdMapel').value=b.mapel||'';
+  document.getElementById('gdKontak').value=b.kontak||'';
+  document.getElementById('gdAlamat').value=b.alamat||'';
+  document.getElementById('gdEmail').value=b.email||'';
+  document.getElementById('gdMotto').value=b.motto||'';
+}
+
+function saveBiodata() {
+  S.biodata.nama=document.getElementById('gdNama').value.trim();
+  S.biodata.tempatLahir=document.getElementById('gdTempatLahir').value.trim();
+  S.biodata.tglLahir=document.getElementById('gdTglLahir').value;
+  S.biodata.nip=document.getElementById('gdNIP').value.trim();
+  S.biodata.mapel=document.getElementById('gdMapel').value.trim();
+  S.biodata.kontak=document.getElementById('gdKontak').value.trim();
+  S.biodata.alamat=document.getElementById('gdAlamat').value.trim();
+  S.biodata.email=document.getElementById('gdEmail').value.trim();
+  S.biodata.motto=document.getElementById('gdMotto').value.trim();
+  save(); toast('Biodata berhasil disimpan ✓');
+  refreshDashboard();
+}
+
+function downloadTemplateGuru() {
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet([
+    ['Nama Guru','Tempat Lahir','Tanggal Lahir','NIP','Mata Pelajaran/Jabatan','No Kontak','Alamat','Email','Motto'],
+    ['Alimin Tarwa, S.Pd','Tual','1990-01-01','196001011980031001','Matematika','08123456789','Jl. Contoh No. 1','guru@email.com','Pendidikan adalah kunci masa depan'],
+  ]);
+  XLSX.utils.book_append_sheet(wb,ws,'Template Guru');
+  XLSX.writeFile(wb,'template_biodata_guru.xlsx');
+}
+
+function importGuru(input) {
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try {
+      const wb=XLSX.read(e.target.result,{type:'binary'});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      const data=XLSX.utils.sheet_to_json(ws,{header:1});
+      if(data.length<2) { toast('Data tidak ditemukan','error'); return; }
+      const row=data[1];
+      S.biodata={
+        nama:(row[0]||'').toString(),tempatLahir:(row[1]||'').toString(),
+        tglLahir:(row[2]||'').toString(),nip:(row[3]||'').toString(),
+        mapel:(row[4]||'').toString(),kontak:(row[5]||'').toString(),
+        alamat:(row[6]||'').toString(),email:(row[7]||'').toString(),
+        motto:(row[8]||'').toString(),
+      };
+      save(); loadBiodata(); toast('Data guru berhasil diimport ✓');
+      refreshDashboard();
+    } catch(err) { toast('Gagal import: '+err.message,'error'); }
+  };
+  reader.readAsBinaryString(file);
+  input.value='';
+}
+
+// ════════════ PENGATURAN ════════════
+function loadPengaturan() {
+  document.getElementById('sTahunPelajaran').value=S.pengaturan.tahun||'2024/2025';
+  setSemesterUI(S.pengaturan.semester||'ganjil');
+}
+
+function setSemester(sem) {
+  S.pengaturan.semester=sem;
+  setSemesterUI(sem);
+}
+
+function setSemesterUI(sem) {
+  document.getElementById('semGanjilBtn').classList.toggle('active',sem==='ganjil');
+  document.getElementById('semGenapBtn').classList.toggle('active',sem==='genap');
+}
+
+function savePengaturan() {
+  S.pengaturan.tahun=document.getElementById('sTahunPelajaran').value.trim();
+  save();
+  document.getElementById('topYear').textContent=S.pengaturan.tahun;
+  toast('Pengaturan berhasil disimpan ✓');
+  refreshDashboard();
+}
+
+function gantiPassword() {
+  const baru=document.getElementById('sPasswordBaru').value;
+  const konfirmasi=document.getElementById('sPasswordKonfirmasi').value;
+  if(!baru) { toast('Isi password baru!','error'); return; }
+  if(baru!==konfirmasi) { toast('Password tidak cocok!','error'); return; }
+  S.password=baru; save();
+  document.getElementById('sPasswordBaru').value='';
+  document.getElementById('sPasswordKonfirmasi').value='';
+  toast('Password berhasil diubah ✓');
+}
+
+function resetAllData() {
+  const password=S.password;
+  const logoB64=S.logoB64;
+  const schoolLogoB64=S.schoolLogoB64;
+  Object.assign(S,{
+    kelas:[],siswa:[],absenSiswa:{},nilai:{},absenGuru:{},jurnal:{},tugas:[],
+    biodata:{nama:'',tempatLahir:'',tglLahir:'',nip:'',mapel:'',kontak:'',alamat:'',email:'',motto:''},
+    sekolah:{nama:'SMP Negeri 10 Tual',alamat:'Tual, Maluku',npsn:'',kepsek:'',telp:'',email:'',web:'',akreditasi:'A (Unggul)'},
+    pengaturan:{tahun:'2024/2025',semester:'ganjil'},
+    password, logoB64, schoolLogoB64
+  });
+  save(); refreshAll(); showPage('dashboard',null);
+  toast('Semua data berhasil direset','error');
+}
+
+// ════════════ CALENDAR ════════════
+function renderCalendar(elId, bulan) {
+  const el=document.getElementById(elId); if(!el) return;
+  const year=new Date().getFullYear();
+  const firstDay=new Date(year,bulan,1).getDay();
+  const daysInMonth=new Date(year,bulan+1,0).getDate();
+  const today=new Date();
+
+  let html=DAYS.map(d=>`<div class="cal-day-name">${d}</div>`).join('');
+  for(let i=0;i<firstDay;i++) html+='<div></div>';
+  for(let d=1;d<=daysInMonth;d++) {
+    const date=new Date(year,bulan,d);
+    const isWknd=date.getDay()===0||date.getDay()===6;
+    const isToday=date.toDateString()===today.toDateString();
+    html+=`<div class="cal-day ${isToday?'today':''} ${isWknd?'weekend':''}">${d}</div>`;
+  }
+  el.innerHTML=html;
+}
+
+function toggleCal(elId) {
+  const el=document.getElementById(elId);
+  el.classList.toggle('show');
+  const btn=el.previousElementSibling.querySelector('.cal-toggle');
+  btn.textContent=el.classList.contains('show')?'🙈 Sembunyikan Kalender':'👁 Tampilkan Kalender';
+}
+
+// ════════════ SAMPLE DATA ════════════
+// (Empty by default, filled by user)
+
+console.log('✅ Aplikasi Administrasi Guru SMP Negeri 10 Tual berhasil dimuat');
+</script>
+</body>
+</html>
